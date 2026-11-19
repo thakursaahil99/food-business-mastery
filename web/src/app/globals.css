@@ -1,0 +1,257 @@
+@import "tailwindcss";
+
+/* ───────────────────────── Redbean design tokens ───────────────────────── */
+@theme {
+  --color-bean-50: #fff1f2;
+  --color-bean-100: #ffe0e2;
+  --color-bean-200: #ffc5ca;
+  --color-bean-300: #ff9aa2;
+  --color-bean-400: #ff5f6c;
+  --color-bean-500: #f8303f;
+  --color-bean-600: #e01426;
+  --color-bean-700: #bc0c1d;
+  --color-bean-800: #9b0e1d;
+  --color-bean-900: #80121f;
+  --color-bean-950: #46040b;
+
+  --color-ink-950: #07070a;
+  --color-ink-900: #0d0d12;
+  --color-ink-800: #15151c;
+  --color-ink-700: #1f1f28;
+  --color-ink-600: #2c2c38;
+  --color-ink-500: #4a4a58;
+  --color-ink-400: #6f6f7e;
+  --color-ink-300: #a0a0ad;
+  --color-ink-200: #cfcfd8;
+  --color-ink-100: #ececf1;
+
+  --color-cream-50: #fdfbf8;
+  --color-cream-100: #f8f4ee;
+  --color-cream-200: #efe8dd;
+
+  --color-gold-400: #f5c26b;
+  --color-gold-500: #e9a93a;
+
+  --font-sans: var(--font-geist), var(--font-deva), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-deva), var(--font-geist), ui-sans-serif, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+  --animate-pulse-ring: pulse-ring 2s var(--ease-out-expo) infinite;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(2deg); }
+  }
+}
+
+/* Semantic tokens (portal surfaces) — light by default, dark under .dark or OS pref */
+:root {
+  --bg: var(--color-cream-50);
+  --surface: #ffffff;
+  --surface-2: var(--color-cream-100);
+  --border: rgb(15 15 20 / 0.08);
+  --border-strong: rgb(15 15 20 / 0.14);
+  --fg: var(--color-ink-900);
+  --fg-muted: var(--color-ink-400);
+  --ring: var(--color-bean-500);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis owns scrolling */
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-bean-500);
+  color: white;
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+
+/* Student portal: everything rem-based grows ~6% for older / non-technical students.
+   Hindi gets a touch more line-height so matras do not collide. */
+:root:has(.portal-easy) { font-size: 17px; }
+:root:has(.portal-easy.text-lg-ui) { font-size: 19px; }
+:root:has(.portal-easy.text-xl-ui) { font-size: 21px; }
+.portal-easy :lang(hi) { line-height: 1.65; }
+
+/* Student portal palette: quiet neutrals, one border, one soft shadow. Red is for the main action only. */
+.portal-easy {
+  --fg-muted: #62626c;
+}
+.portal-easy [data-sheen] { display: none; }
+.portal-easy [data-variant="primary"] { box-shadow: 0 1px 2px rgb(17 17 20 / 0.12); }
+.portal-easy [data-variant="primary"]:hover { box-shadow: 0 1px 2px rgb(17 17 20 / 0.12); }
+.portal-easy .shadow-sm { box-shadow: 0 1px 2px rgb(17 17 20 / 0.05); }
+.portal-easy :where(button, a, input, select, textarea) { -webkit-tap-highlight-color: transparent; }
+.portal-easy :where(input, select, textarea) { font-size: max(1rem, 16px); } /* stops iOS zoom-on-focus */
+
+/* ───────────────────────── Utilities ───────────────────────── */
+@utility text-balance { text-wrap: balance; }
+
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.14) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+@utility line-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility text-gradient-bean {
+  background: linear-gradient(100deg, var(--color-bean-300), var(--color-bean-500) 40%, var(--color-gold-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shimmer-bg {
+  background: linear-gradient(90deg, transparent 0%, rgb(255 255 255 / 0.5) 50%, transparent 100%);
+  background-size: 200% 100%;
+}
+
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
+}
+
+/* ───────────────────────── View transitions ───────────────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+::view-transition-old(.page-slide) {
+  animation: vt-out 280ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+::view-transition-new(.page-slide) {
+  animation: vt-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes vt-out { to { opacity: 0; transform: translateY(-8px); filter: blur(4px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ───────────────────────── Theme colours (student portal + admin console) ─────────────────────────
+   The picker sets html[data-accent] (saved in localStorage, applied before paint by the script in
+   app/layout.tsx). Only elements with .rb-themed (portal root + admin root) re-map the bean scale, so
+   marketing and login pages keep the Redbean red. Every bg-bean-* and text-bean-* class follows.
+   --accent-rgb feeds the coloured glow shadows. Keep apostrophes out of these comments. */
+:root { --accent-rgb: 224 20 38; }
+.rb-themed { --accent-rgb: 224 20 38; }
+
+html[data-accent="orange"] .rb-themed {
+  --accent-rgb: 234 88 12;
+  --color-bean-50: #fff7ed; --color-bean-100: #ffedd5; --color-bean-200: #fed7aa; --color-bean-300: #fdba74;
+  --color-bean-400: #fb923c; --color-bean-500: #f97316; --color-bean-600: #ea580c; --color-bean-700: #c2410c;
+  --color-bean-800: #9a3412; --color-bean-900: #7c2d12; --color-bean-950: #431407;
+}
+html[data-accent="green"] .rb-themed {
+  --accent-rgb: 5 150 105;
+  --color-bean-50: #ecfdf5; --color-bean-100: #d1fae5; --color-bean-200: #a7f3d0; --color-bean-300: #6ee7b7;
+  --color-bean-400: #34d399; --color-bean-500: #10b981; --color-bean-600: #059669; --color-bean-700: #047857;
+  --color-bean-800: #065f46; --color-bean-900: #064e3b; --color-bean-950: #022c22;
+}
+html[data-accent="teal"] .rb-themed {
+  --accent-rgb: 13 148 136;
+  --color-bean-50: #f0fdfa; --color-bean-100: #ccfbf1; --color-bean-200: #99f6e4; --color-bean-300: #5eead4;
+  --color-bean-400: #2dd4bf; --color-bean-500: #14b8a6; --color-bean-600: #0d9488; --color-bean-700: #0f766e;
+  --color-bean-800: #115e59; --color-bean-900: #134e4a; --color-bean-950: #042f2e;
+}
+html[data-accent="blue"] .rb-themed {
+  --accent-rgb: 37 99 235;
+  --color-bean-50: #eff6ff; --color-bean-100: #dbeafe; --color-bean-200: #bfdbfe; --color-bean-300: #93c5fd;
+  --color-bean-400: #60a5fa; --color-bean-500: #3b82f6; --color-bean-600: #2563eb; --color-bean-700: #1d4ed8;
+  --color-bean-800: #1e40af; --color-bean-900: #1e3a8a; --color-bean-950: #172554;
+}
+html[data-accent="indigo"] .rb-themed {
+  --accent-rgb: 79 70 229;
+  --color-bean-50: #eef2ff; --color-bean-100: #e0e7ff; --color-bean-200: #c7d2fe; --color-bean-300: #a5b4fc;
+  --color-bean-400: #818cf8; --color-bean-500: #6366f1; --color-bean-600: #4f46e5; --color-bean-700: #4338ca;
+  --color-bean-800: #3730a3; --color-bean-900: #312e81; --color-bean-950: #1e1b4b;
+}
+html[data-accent="purple"] .rb-themed {
+  --accent-rgb: 124 58 237;
+  --color-bean-50: #f5f3ff; --color-bean-100: #ede9fe; --color-bean-200: #ddd6fe; --color-bean-300: #c4b5fd;
+  --color-bean-400: #a78bfa; --color-bean-500: #8b5cf6; --color-bean-600: #7c3aed; --color-bean-700: #6d28d9;
+  --color-bean-800: #5b21b6; --color-bean-900: #4c1d95; --color-bean-950: #2e1065;
+}
+html[data-accent="pink"] .rb-themed {
+  --accent-rgb: 219 39 119;
+  --color-bean-50: #fdf2f8; --color-bean-100: #fce7f3; --color-bean-200: #fbcfe8; --color-bean-300: #f9a8d4;
+  --color-bean-400: #f472b6; --color-bean-500: #ec4899; --color-bean-600: #db2777; --color-bean-700: #be185d;
+  --color-bean-800: #9d174d; --color-bean-900: #831843; --color-bean-950: #500724;
+}
+.rb-themed ::selection { background: var(--color-bean-500); }

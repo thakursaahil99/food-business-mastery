@@ -235,8 +235,8 @@ export function ProgressRing({ value, size = 120, stroke = 10, className, trackC
       <svg width={size} height={size} className="-rotate-90">
         <defs>
           <linearGradient id="ring-g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#ff5f6c" />
-            <stop offset="100%" stopColor="#bc0c1d" />
+            <stop offset="0%" style={{ stopColor: "var(--color-bean-400)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--color-bean-700)" }} />
           </linearGradient>
         </defs>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className={trackClass} />

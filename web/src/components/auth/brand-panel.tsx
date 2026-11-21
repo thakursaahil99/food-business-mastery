@@ -8,7 +8,7 @@ import Image from "next/image";
 import { BRAND } from "@/components/ui/logo";
 import { EASE } from "@/components/motion/primitives";
 import { ArrowUpRight } from "lucide-react";
-import { AUTH_PHOTO, FLAGSHIP_COURSE } from "./course";
+import { AUTH_PHOTO, FLAGSHIP_COURSE, SECTOR_PHOTOS } from "./course";
 
 /** Decorative beans, kept to the edges so they stay clear of the centred logo and copy. */
 const BEANS: { pos: CSSProperties; size: number; rotate: number }[] = [
@@ -19,6 +19,14 @@ const BEANS: { pos: CSSProperties; size: number; rotate: number }[] = [
   // Bottom row sits above the proof strip so no bean shows through it.
   { pos: { left: "8%", top: "64%" }, size: 72, rotate: 15 },
   { pos: { right: "10%", top: "66%" }, size: 56, rotate: -35 },
+];
+
+/** Centres of the four sector photos: the diagonals of the orbit (radius 46.5% of the box, so the ring inset is 3.5%). */
+const ORBIT: CSSProperties[] = [
+  { left: "17.1%", top: "17.1%" },
+  { left: "82.9%", top: "17.1%" },
+  { left: "82.9%", top: "82.9%" },
+  { left: "17.1%", top: "82.9%" },
 ];
 
 /** Coach credentials shown under the student panel (from bobbysingh.in). */
@@ -35,7 +43,7 @@ export function BrandPanel({ variant = "student" }: { variant?: "student" | "adm
 
   return (
     <aside className="relative hidden overflow-hidden bg-ink-950 text-white lg:flex lg:flex-col">
-      <Image src={AUTH_PHOTO.src} alt="" aria-hidden fill priority sizes="45vw" className="object-cover object-[50%_40%]" />
+      <Image src={AUTH_PHOTO.src} alt="" aria-hidden fill priority sizes="45vw" className="object-cover object-[50%_40%] opacity-40" />
       {/* Brand tint over the photo; heavier at top and bottom where the text sits. */}
       <div
         aria-hidden
@@ -57,21 +65,44 @@ export function BrandPanel({ variant = "student" }: { variant?: "student" | "adm
       ))}
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-10 text-center">
-        <motion.div initial={{ scale: 0.6, opacity: 0, rotate: -20 }} animate={{ scale: 1, opacity: 1, rotate: 0 }} transition={{ duration: 1, ease: EASE }}>
-          <Link href="/" aria-label="Redbean Academy home" className="relative inline-block">
-            {/* Soft glow behind the badge only — no visible rings or discs. */}
-            <span aria-hidden className="absolute inset-x-0 top-0 aspect-square rounded-full bg-bean-600/35 blur-3xl" />
-            <Image
-              src={BRAND.logoWhite.src}
-              width={BRAND.logoWhite.width}
-              height={BRAND.logoWhite.height}
-              alt="Red Bean Hospitality"
-              priority
-              className="relative h-auto w-44 drop-shadow-[0_10px_30px_rgb(0_0_0/0.45)]"
-            />
-          </Link>
-        </motion.div>
-        <motion.h2 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.8, ease: EASE }} className="font-display mt-8 text-4xl font-bold tracking-tight">
+        {/* Logo in the middle of a thin orbit, with the four sectors as round photos on it (white rim, like the badge). */}
+        <div className="relative size-[22rem] [@media(max-height:820px)]:size-72">
+          {/* Orbit line passes through the photo centres (radius = distance from centre to ORBIT points). */}
+          <span aria-hidden className="absolute inset-[3.5%] rounded-full border border-dashed border-white/20" />
+          <span aria-hidden className="absolute inset-[30%] rounded-full bg-bean-600/30 blur-3xl" />
+          {/* translate-y 61%: the badge circle sits at 61% of the logo image height, so this centres the circle. */}
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0, rotate: -20 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
+            transition={{ duration: 1, ease: EASE }}
+            className="absolute left-1/2 top-1/2 w-[38%] -translate-x-1/2 -translate-y-[61%]"
+          >
+            <Link href="/" aria-label="Redbean Academy home" className="block">
+              <Image src={BRAND.logoWhite.src} width={BRAND.logoWhite.width} height={BRAND.logoWhite.height} alt="Red Bean Hospitality" priority className="h-auto w-full drop-shadow-[0_10px_30px_rgb(0_0_0/0.45)]" />
+            </Link>
+          </motion.div>
+          {/* Slow orbit: this layer turns once every minute, each photo turns back so it stays upright. */}
+          <div className="rb-orbit absolute inset-0">
+          {SECTOR_PHOTOS.map((p, i) => (
+            <motion.figure
+              key={p.src}
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ opacity: { delay: 0.3 + i * 0.12, duration: 0.6 }, scale: { delay: 0.3 + i * 0.12, duration: 0.6, ease: EASE } }}
+              className="absolute -translate-x-1/2 -translate-y-1/2"
+              style={{ ...ORBIT[i], width: i % 2 ? "21%" : "24%" }}
+            >
+              <div className="rb-orbit-counter">
+                <span className="relative block aspect-square w-full overflow-hidden rounded-full shadow-[0_12px_30px_-8px_rgb(0_0_0/0.6)] ring-[3px] ring-white">
+                  <Image src={p.src} alt={p.alt} fill sizes="96px" className="object-cover" />
+                </span>
+                <figcaption className="absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink-950/70 px-2.5 py-0.5 text-[11px] font-medium text-white/90">{p.label}</figcaption>
+              </div>
+            </motion.figure>
+          ))}
+          </div>
+        </div>
+        <motion.h2 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.8, ease: EASE }} className="font-display mt-6 text-4xl font-bold tracking-tight">
           Redbean <span className="text-bean-400">{admin ? "Console" : "Academy"}</span>
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.8, ease: EASE }} className="mt-3 max-w-xs text-white/70">

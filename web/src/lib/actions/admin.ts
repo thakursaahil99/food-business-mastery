@@ -7,6 +7,7 @@ import { getBatches } from "../api/data-admin";
 import { nextId, reviewKey, store, doubtRows } from "../api/mock-store";
 import type { ActionResult, Assignment, ClassSession, Course, CourseDraft, Doubt, LeadStatus, Lesson, Submission } from "../types";
 import { DEMO_VIDEOS, mockCoaches } from "../api/mock";
+import { isSafeCover } from "../course-covers";
 
 const LEAD_STATUSES: LeadStatus[] = ["new", "contacted", "approved", "rejected"];
 const STAFF = ["super_admin", "admin"] as const;
@@ -195,6 +196,8 @@ export async function createCourse(input: CourseDraft): Promise<ActionResult<{ i
   }
   const coach = mockCoaches().find((c) => c.id === d.coachId);
   if (!coach) return { ok: false, error: "Choose a coach." };
+  const cover = input.cover ?? null;
+  if (cover !== null && !isSafeCover(cover)) return { ok: false, error: "Pick a cover photo from the library." };
   const taken = new Set(["cgr-mastery", ...store.createdCourses.map((c) => c.slug)]);
   let slug = slugify(d.title);
   for (let n = 2; taken.has(slug); n++) slug = `${slugify(d.title)}-${n}`;
@@ -209,6 +212,7 @@ export async function createCourse(input: CourseDraft): Promise<ActionResult<{ i
     kind: "short",
     level: d.level,
     coach,
+    cover,
     startsAt: d.startsAt,
     endsAt: d.endsAt,
     status: d.publish ? "published" : "draft",

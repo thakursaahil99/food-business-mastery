@@ -21,6 +21,7 @@ export const portalNav = [
   { href: "/student/doubts", key: "doubts", icon: MessageCircleQuestion },
   { href: "/student/attendance", key: "attendance", icon: CalendarCheck },
   { href: "/student/payments", key: "payments", icon: Wallet },
+  { href: "/student/certificate", key: "certificate", icon: GraduationCap },
   { href: "/student/profile", key: "profile", icon: UserRound },
 ] as const satisfies readonly { href: string; key: keyof Dict["nav"]; icon: unknown }[];
 
@@ -52,15 +53,16 @@ const digits = (n: string) => n.replace(/\D/g, "");
 export function Sidebar({ user, extra }: { user: ReactNode; extra?: ReactNode }) {
   const { t } = useT();
   return (
-    <aside className="sticky top-0 hidden h-dvh flex-col overflow-hidden bg-ink-950 px-4 py-6 grain lg:flex">
-      <div aria-hidden className="pointer-events-none absolute -left-20 bottom-20 size-64 rounded-full bg-bean-700/25 blur-3xl" />
+    <aside className="rb-nav rb-nav-surface sticky top-0 hidden h-dvh flex-col overflow-hidden bg-[var(--nav-bg)] px-4 py-6 grain lg:flex">
+      <div aria-hidden className="rb-nav-deco pointer-events-none absolute -left-20 bottom-20 size-64 rounded-full bg-bean-700/25 blur-3xl" />
       <div className="relative z-10 flex h-full flex-col">
         <Link href="/student" className="flex items-center gap-2 px-3">
-          <Logo dark sub={false} />
-          <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white/70">{t.nav.academy}</span>
+          <span className="rb-nav-dark-only"><Logo dark sub={false} /></span>
+          <span className="rb-nav-light-only"><Logo sub={false} /></span>
+          <span className="rounded-md bg-[var(--nav-chip)] px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--nav-muted)]">{t.nav.academy}</span>
         </Link>
         <nav className="mt-9 flex-1 overflow-y-auto" aria-label="Menu" data-lenis-prevent>
-          <div className="px-3 text-xs font-medium uppercase tracking-[0.2em] text-white/35">{t.nav.menu}</div>
+          <div className="px-3 text-xs font-medium uppercase tracking-[0.2em] text-[var(--nav-faint)]">{t.nav.menu}</div>
           <ul className="mt-3 space-y-1">
             <WithPath>
               {(path) =>
@@ -71,9 +73,9 @@ export function Sidebar({ user, extra }: { user: ReactNode; extra?: ReactNode })
                       <Link
                         href={href}
                         aria-current={active ? "page" : undefined}
-                        className={cn("relative flex min-h-12 items-center gap-3 rounded-xl px-3.5 text-base font-medium transition-colors", active ? "text-white" : "text-white/60 hover:bg-white/5 hover:text-white")}
+                        className={cn("relative flex min-h-12 items-center gap-3 rounded-xl px-3.5 text-base font-medium transition-colors", active ? "text-[var(--nav-active-fg)]" : "text-[var(--nav-muted)] hover:bg-[var(--nav-hover)] hover:text-[var(--nav-fg)]")}
                       >
-                        {active && <motion.span layoutId="sidebar-pill" transition={{ type: "spring", stiffness: 400, damping: 32 }} className="absolute inset-0 rounded-xl bg-gradient-to-r from-bean-600 to-bean-700 shadow-[0_8px_24px_-8px_rgb(var(--accent-rgb)/0.7)]" />}
+                        {active && <motion.span layoutId="sidebar-pill" transition={{ type: "spring", stiffness: 400, damping: 32 }} className="rb-nav-pill absolute inset-0 rounded-xl" />}
                         <Icon className="relative size-5" />
                         <span className="relative">{t.nav[key]}</span>
                       </Link>
@@ -82,21 +84,15 @@ export function Sidebar({ user, extra }: { user: ReactNode; extra?: ReactNode })
                 })
               }
             </WithPath>
-            <li>
-              <span className="flex min-h-12 items-center gap-3 rounded-xl px-3.5 text-base font-medium text-white/30">
-                <GraduationCap className="size-5" /> {t.nav.certificate}
-                <span className="ml-auto whitespace-nowrap rounded-md bg-white/10 px-1.5 py-0.5 text-[11px] font-medium text-white/50">{t.nav.soon}</span>
-              </span>
-            </li>
           </ul>
         </nav>
 
         {extra}
 
-        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-white/[0.05] p-2.5">
+        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-[var(--nav-card)] p-2.5">
           {user}
           <form action={logout} className="ml-auto">
-            <button className="grid size-10 place-items-center rounded-xl text-white/50 transition-colors hover:bg-bean-600/20 hover:text-bean-300" aria-label={t.shell.logout} title={t.shell.logout}>
+            <button className="grid size-10 place-items-center rounded-xl text-[var(--nav-faint)] transition-colors hover:bg-bean-600/15 hover:text-bean-600" aria-label={t.shell.logout} title={t.shell.logout}>
               <LogOut className="size-[18px]" />
             </button>
           </form>
@@ -200,7 +196,7 @@ export function MobileTabBar() {
           </>
         )}
       </AnimatePresence>
-      <nav className="fixed inset-x-0 bottom-0 z-[59] border-t border-white/10 bg-ink-950 px-1.5 pt-1.5 lg:hidden" style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}>
+      <nav className="fixed inset-x-0 bottom-0 z-[59] rb-nav-surface border-t border-[var(--nav-border)] bg-[var(--nav-bg)] px-1.5 pt-1.5 lg:hidden" style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}>
         <ul className="grid grid-cols-5">
           <WithPath>
             {(path) => {
@@ -212,18 +208,18 @@ export function MobileTabBar() {
                     return (
                       <li key={href}>
                         <Link href={href} onClick={() => setMore(false)} className={item}>
-                          {active && <motion.span layoutId="tab-pill" transition={{ type: "spring", stiffness: 500, damping: 40 }} className="absolute inset-0 rounded-xl bg-gradient-to-r from-bean-600 to-bean-700" />}
-                          <Icon className={cn("relative size-[22px] transition-colors", active ? "text-white" : "text-white/55")} />
-                          <span className={cn("relative max-w-full text-center transition-colors", active ? "font-semibold text-white" : "text-white/55")}>{t.nav[key]}</span>
+                          {active && <motion.span layoutId="tab-pill" transition={{ type: "spring", stiffness: 500, damping: 40 }} className="rb-nav-pill absolute inset-0 rounded-xl" />}
+                          <Icon className={cn("relative size-[22px] transition-colors", active ? "text-[var(--nav-active-fg)]" : "text-[var(--nav-muted)]")} />
+                          <span className={cn("relative max-w-full text-center transition-colors", active ? "font-semibold text-[var(--nav-active-fg)]" : "text-[var(--nav-muted)]")}>{t.nav[key]}</span>
                         </Link>
                       </li>
                     );
                   })}
                   <li>
                     <button onClick={() => setMore((m) => !m)} aria-expanded={more} className={cn(item, "w-full")}>
-                      {(more || moreActive) && <motion.span layoutId="tab-pill" transition={{ type: "spring", stiffness: 500, damping: 40 }} className="absolute inset-0 rounded-xl bg-gradient-to-r from-bean-600 to-bean-700" />}
-                      <MoreHorizontal className={cn("relative size-[22px]", more || moreActive ? "text-white" : "text-white/55")} />
-                      <span className={cn("relative max-w-full text-center", more || moreActive ? "font-semibold text-white" : "text-white/55")}>{t.nav.more}</span>
+                      {(more || moreActive) && <motion.span layoutId="tab-pill" transition={{ type: "spring", stiffness: 500, damping: 40 }} className="rb-nav-pill absolute inset-0 rounded-xl" />}
+                      <MoreHorizontal className={cn("relative size-[22px]", more || moreActive ? "text-[var(--nav-active-fg)]" : "text-[var(--nav-muted)]")} />
+                      <span className={cn("relative max-w-full text-center", more || moreActive ? "font-semibold text-[var(--nav-active-fg)]" : "text-[var(--nav-muted)]")}>{t.nav.more}</span>
                     </button>
                   </li>
                 </>
@@ -236,7 +232,8 @@ export function MobileTabBar() {
   );
 }
 
-export function Topbar({ user, userWide, extra }: { user: ReactNode; userWide?: ReactNode; extra?: ReactNode }) {
+/** `tools` (e.g. the colour picker) shows from tablet width up; phones get it on the profile page. */
+export function Topbar({ user, userWide, extra, tools }: { user: ReactNode; userWide?: ReactNode; extra?: ReactNode; tools?: ReactNode }) {
   const { t } = useT();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-xl">
@@ -246,17 +243,20 @@ export function Topbar({ user, userWide, extra }: { user: ReactNode; userWide?: 
         </Link>
         <WithPath>
           {(path) => (
-            <span className="hidden text-base font-semibold text-fg lg:block">
+            <span className="hidden min-w-0 truncate text-base font-semibold text-fg lg:block">
               {path?.startsWith("/student/class") ? t.shell.liveClass : (() => { const n = [...portalNav].reverse().find((x) => isActive(path, x.href)); return n ? t.nav[n.key] : ""; })()}
             </span>
           )}
         </WithPath>
-        <div className="ml-auto flex items-center gap-2">
+        {/* The wide name + email chip only fits from xl: at 1024px with XL text it pushed the bar off-screen. */}
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {tools && <div className="hidden sm:block">{tools}</div>}
           <LangToggle className="hidden sm:inline-flex" />
           <HelpButton inline />
           <div className="lg:hidden">{extra}</div>
+          {/* lg–xl: the sidebar's user card already shows who is signed in */}
           <div className="lg:hidden">{user}</div>
-          {userWide && <div className="ml-1 hidden border-l border-line pl-3 lg:block">{userWide}</div>}
+          {userWide && <div className="ml-1 hidden border-l border-line pl-3 xl:block">{userWide}</div>}
         </div>
       </div>
     </header>

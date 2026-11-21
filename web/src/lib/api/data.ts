@@ -6,6 +6,7 @@ import type {
   ReminderPrefs,
   Assignment,
   BillingProfile,
+  CertificateEntry,
   Doubt,
   Announcement,
   ClassSession,
@@ -19,6 +20,7 @@ import { apiFetch, getToken, isMock } from "./client";
 import * as mock from "./mock";
 import * as mstore from "./mock-store";
 import { verifyMockToken } from "../auth-config";
+import { PROGRAM_COVER } from "../course-covers";
 import type { Role } from "../types";
 
 
@@ -96,11 +98,18 @@ export async function getCourses(): Promise<Course[]> {
     tagline: "Your 16-week cohort program: weekly recordings unlock with the live classes.",
     kind: "program",
     level: "Advanced",
+    cover: PROGRAM_COVER,
     coach: enrollment.batch.coach,
     modules,
   };
+  // Admin edits to the program change its name, summary and photo only; its lessons stay the student's own.
+  const programEdit = isMock ? mstore.store.courseOverrides.get(program.slug) : undefined;
+  if (programEdit) Object.assign(program, { title: programEdit.title, tagline: programEdit.tagline, cover: programEdit.cover ?? program.cover });
+  const shortCourses = mock.mockShortCourses()
+    .map(mstore.withCourseEdits)
+    .filter((c): c is Course => c !== null && c.status !== "draft");
   const all = isMock
-    ? [program, ...mock.mockShortCourses(), ...mstore.publishedCourses(await getRequestTime())]
+    ? [program, ...shortCourses, ...mstore.publishedCourses(await getRequestTime())]
     : [program, ...(await apiFetch<Course[]>("/my/courses?kind=short"))];
   return all.map(withoutLockedMedia);
 }
@@ -165,4 +174,33 @@ export async function getReminderPrefs(): Promise<ReminderPrefs> {
   const user = await requireUser();
   if (isMock) return mstore.store.prefs.get(user.id) ?? mstore.DEFAULT_PREFS;
   return apiFetch<ReminderPrefs>("/my/reminder-prefs");
+}
+
+/** Certificates: the steps left on each course and the certificate once earned. */
+export async function getCertificates(): Promise<CertificateEntry[]> {
+  const user = await requireUser();
+  if (!isMock) return apiFetch<CertificateEntry[]>("/my/certificates");
+
+  // Mock: same rules as the Laravel CertificateService, from the demo enrollment.
+  const [e, modules, assignments] = await Promise.all([getEnrollment(), getModules(), getAssignments()]);
+  const lessons = modules.flatMap((m) => m.lessons);
+  const lessonsDone = lessons.filter((l) => l.completed).length;
+  const sent = assignments.filter((a) => a.submission).length;
+  const steps: CertificateEntry["steps"] = [
+    { key: "attendance", label: "Attend 75% or more of the classes", done: e.attendancePct >= 75, current: e.attendancePct, total: 100, unit: "%" },
+    { key: "lessons", label: "Finish every lesson", done: lessons.length > 0 && lessonsDone >= lessons.length, current: lessonsDone, total: lessons.length, unit: null },
+    { key: "homework", label: "Send all your homework", done: assignments.length > 0 && sent >= assignments.length, current: sent, total: assignments.length, unit: null },
+    { key: "final", label: "Pass the final test", done: false, current: 0, total: 1, unit: null, hint: "The final test is in the last week." },
+  ];
+  const short = mock.mockShortCourses()[0]!;
+  return [
+    { course: { id: e.program.id, slug: e.program.slug, title: e.program.title, kind: "program", batchName: e.batch.name }, status: "in_progress", steps, stepsDone: steps.filter((x) => x.done).length, certificate: null },
+    {
+      course: { id: short.id, slug: short.slug, title: short.title, kind: "short", batchName: null },
+      status: "earned",
+      steps: [{ key: "lessons", label: "Finish every lesson", done: true, current: 5, total: 5, unit: null }],
+      stepsDone: 1,
+      certificate: { code: "RB-DEMO7K2Q", studentName: user.name, courseTitle: short.title, issuedAt: new Date(Date.now() - 3 * 86_400_000).toISOString(), url: null },
+    },
+  ];
 }

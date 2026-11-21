@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useRef, useState, useTransition } from "react";
-import { ArrowLeft, CalendarDays, Paperclip, Plus, Trash2, Wand2 } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, CalendarDays, Check, Paperclip, Plus, Trash2, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { createCourse } from "@/lib/actions/admin";
+import { updateCourse } from "@/lib/actions/admin-crud";
+import { COVER_LIBRARY } from "@/lib/course-covers";
 import type { Coach, Course, CourseDraft } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Page, PageHeader } from "./ui";
@@ -24,8 +27,9 @@ const startIso = (d: string) => new Date(`${d}T00:00:00+05:30`).toISOString();
 const endIso = (d: string) => new Date(`${d}T23:59:00+05:30`).toISOString();
 const pretty = (d: string) => (d ? new Date(`${d}T00:00:00Z`).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : "—");
 
-type LessonDraft = { key: string; title: string; date: string; fileName: string | null; isPreview: boolean };
-type ModuleDraft = { key: string; title: string; lessons: LessonDraft[] };
+type LessonDraft = { key: string; id?: number; title: string; date: string; fileName: string | null; isPreview: boolean };
+type ModuleDraft = { key: string; id?: number; title: string; lessons: LessonDraft[] };
+const istDay = (iso: string) => new Date(+new Date(iso) + IST_MS).toISOString().slice(0, 10);
 
 let seq = 0;
 const key = () => `k${++seq}`;
@@ -34,22 +38,36 @@ const field = "mt-1.5 h-11 w-full rounded-xl border border-line bg-surface px-3.
 const label = "block text-sm font-medium text-fg";
 const LEVELS: Course["level"][] = ["Beginner", "Intermediate", "Advanced"];
 
-export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; serverNow: number }) {
+/**
+ * Create a course, or edit one (`initial`). Courses made here can change everything.
+ * Built-in courses (`detailsOnly`) edit their name, summary, level, coach, photo and publish state only,
+ * so students keep progress on the existing lessons.
+ */
+export function CourseBuilder({ coaches, serverNow, initial, detailsOnly = false }: { coaches: Coach[]; serverNow: number; initial?: Course; detailsOnly?: boolean }) {
   const router = useRouter();
   const today = istToday(serverNow);
   const firstStart = addDays(today, 1);
+  const startInit = initial?.startsAt ? istDay(initial.startsAt) : firstStart;
 
-  const [title, setTitle] = useState("");
-  const [tagline, setTagline] = useState("");
-  const [description, setDescription] = useState("");
-  const [level, setLevel] = useState<Course["level"]>("Beginner");
-  const [coachId, setCoachId] = useState(coaches[0]?.id ?? 0);
-  const [start, setStart] = useState(firstStart);
-  const [end, setEnd] = useState(addDays(firstStart, 4 * 7 - 1));
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [tagline, setTagline] = useState(initial?.tagline ?? "");
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [level, setLevel] = useState<Course["level"]>(initial?.level ?? "Beginner");
+  const [coachId, setCoachId] = useState(initial?.coach.id ?? coaches[0]?.id ?? 0);
+  const [cover, setCover] = useState<string | null>(initial?.cover ?? COVER_LIBRARY[1].src);
+  const [start, setStart] = useState(startInit);
+  const [end, setEnd] = useState(initial?.endsAt ? istDay(initial.endsAt) : addDays(firstStart, 4 * 7 - 1));
   const [gap, setGap] = useState(7);
-  const [modules, setModules] = useState<ModuleDraft[]>([
-    { key: key(), title: "Module 1", lessons: [{ key: key(), title: "", date: firstStart, fileName: null, isPreview: true }] },
-  ]);
+  const [modules, setModules] = useState<ModuleDraft[]>(() =>
+    initial && !detailsOnly
+      ? initial.modules.map((m) => ({
+          key: key(),
+          id: m.id,
+          title: m.title,
+          lessons: m.lessons.map((l) => ({ key: key(), id: l.id, title: l.title, date: l.releaseAt ? istDay(l.releaseAt) : startInit, fileName: l.videoSrc ? "Uploaded video" : null, isPreview: l.isPreview })),
+        }))
+      : [{ key: key(), title: "Module 1", lessons: [{ key: key(), title: "", date: firstStart, fileName: null, isPreview: true }] }],
+  );
   const [errors, setErrors] = useState<string[]>([]);
   const [pending, startTransition] = useTransition();
 
@@ -98,6 +116,7 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
     if (title.trim().length < 3) e.push("Give the course a name.");
     if (tagline.trim().length < 10) e.push("Write a one-line summary (at least 10 letters).");
     if (!coachId) e.push("Choose a coach.");
+    if (detailsOnly) return e;
     if (!start || !end) e.push("Pick a start date and an end date.");
     else if (end <= start) e.push("The end date must be after the start date.");
     if (!modules.length) e.push("Add at least one module.");
@@ -131,18 +150,20 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
       startsAt: startIso(start),
       endsAt: endIso(end),
       publish,
+      cover,
       modules: modules.map((m) => ({
+        id: m.id,
         title: m.title.trim(),
-        lessons: m.lessons.map((l) => ({ title: l.title.trim(), releaseAt: startIso(l.date), fileName: l.fileName, isPreview: l.isPreview })),
+        lessons: m.lessons.map((l) => ({ id: l.id, title: l.title.trim(), releaseAt: startIso(l.date), fileName: l.fileName, isPreview: l.isPreview })),
       })),
     };
     startTransition(async () => {
-      const res = await createCourse(draft);
+      const res = initial ? await updateCourse(initial.slug, draft) : await createCourse(draft);
       if (!res.ok) {
         setErrors([res.error]);
         return void toast.error(res.error);
       }
-      toast.success(publish ? "Course published" : "Saved as draft", {
+      toast.success(initial ? (publish ? "Changes published" : "Saved as draft") : publish ? "Course published" : "Saved as draft", {
         description: publish ? "Students see it in My course. Each lesson opens on its date." : "Only admins can see it until you publish.",
       });
       router.push(`/admin/courses?created=${res.data.slug}`);
@@ -154,7 +175,10 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
       <Link href="/admin/courses" className="inline-flex min-h-10 items-center gap-1.5 text-sm font-medium text-fg-muted hover:text-fg">
         <ArrowLeft className="size-4" /> All courses
       </Link>
-      <PageHeader title="Create a course" sub="Fill in the details, set the dates, then add modules and lessons." />
+      <PageHeader
+        title={initial ? `Edit “${initial.title}”` : "Create a course"}
+        sub={detailsOnly ? "This is a built-in course: you can change its details and photo. Its lessons stay as they are so students keep their progress." : initial ? "Change anything below, then publish or save as draft." : "Fill in the details, set the dates, then add modules and lessons."}
+      />
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-6">
@@ -203,9 +227,12 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
                   </select>
                 </label>
               </div>
+              <CoverPicker value={cover} onChange={setCover} />
             </div>
           </Section>
 
+          {!detailsOnly && (
+          <>
           {/* 2. Dates */}
           <Section step={2} title="Course dates" sub="Students can watch lessons between these dates. Each lesson also has its own opening date.">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -294,19 +321,36 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
               <Plus /> Add module
             </Button>
           </Section>
+          </>
+          )}
         </div>
 
         {/* Summary + save */}
         <aside className="min-w-0 xl:sticky xl:top-24 xl:h-fit">
           <div className="rounded-[20px] border border-line bg-surface p-5">
+            {cover && (
+              <div className="relative -mx-5 -mt-5 mb-4 aspect-[16/9] overflow-hidden rounded-t-[20px]">
+                <Image src={cover} alt="" fill sizes="340px" className="object-cover" />
+              </div>
+            )}
             <h2 className="font-display text-lg font-semibold text-fg">Summary</h2>
             <dl className="mt-3 space-y-2 text-sm">
               <Row k="Name" v={title.trim() || "—"} />
-              <Row k="Dates" v={start && end ? `${pretty(start)} – ${pretty(end)}` : "—"} />
-              <Row k="Modules" v={String(modules.length)} />
-              <Row k="Lessons" v={String(allLessons.length)} />
-              <Row k="Videos attached" v={`${allLessons.filter((l) => l.fileName).length} of ${allLessons.length}`} />
-              <Row k="First lesson opens" v={allLessons.length ? pretty(allLessons.reduce((d, l) => (l.date && l.date < d ? l.date : d), allLessons[0]!.date)) : "—"} />
+              {detailsOnly && initial ? (
+                <>
+                  <Row k="Modules" v={String(initial.modules.length)} />
+                  <Row k="Lessons" v={String(initial.modules.flatMap((m) => m.lessons).length)} />
+                  <Row k="Dates & videos" v="Unchanged" />
+                </>
+              ) : (
+                <>
+                  <Row k="Dates" v={start && end ? `${pretty(start)} – ${pretty(end)}` : "—"} />
+                  <Row k="Modules" v={String(modules.length)} />
+                  <Row k="Lessons" v={String(allLessons.length)} />
+                  <Row k="Videos attached" v={`${allLessons.filter((l) => l.fileName).length} of ${allLessons.length}`} />
+                  <Row k="First lesson opens" v={allLessons.length ? pretty(allLessons.reduce((d, l) => (l.date && l.date < d ? l.date : d), allLessons[0]!.date)) : "—"} />
+                </>
+              )}
             </dl>
 
             {errors.length > 0 && (
@@ -323,7 +367,7 @@ export function CourseBuilder({ coaches, serverNow }: { coaches: Coach[]; server
 
             <div className="mt-5 grid grid-cols-1 gap-2">
               <Button type="button" size="lg" disabled={pending} onClick={() => save(true)}>
-                {pending ? "Saving…" : "Publish course"}
+                {pending ? "Saving…" : initial ? "Save and publish" : "Publish course"}
               </Button>
               <Button type="button" variant="outline" size="lg" disabled={pending} onClick={() => save(false)}>
                 Save as draft
@@ -426,5 +470,41 @@ function LessonEditor({
       </div>
       {outOfRange && <p className="mt-2 text-sm text-bean-600">This date is outside the course dates.</p>}
     </li>
+  );
+}
+
+/** Pick the course photo from Red Bean Hospitality's own photo library. */
+function CoverPicker({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {
+  return (
+    <div>
+      <span className={label}>
+        Course photo <span className="font-normal text-fg-muted">(shown on the course card for students)</span>
+      </span>
+      <div role="radiogroup" aria-label="Course photo" className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {COVER_LIBRARY.map((c) => {
+          const on = value === c.src;
+          return (
+            <button
+              key={c.src}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => onChange(c.src)}
+              className={cn("group relative overflow-hidden rounded-xl text-left ring-offset-2 ring-offset-surface transition", on ? "ring-2 ring-bean-600" : "ring-1 ring-line hover:ring-line-strong")}
+            >
+              <span className="relative block aspect-[4/3]">
+                <Image src={c.src} alt="" fill sizes="(min-width: 640px) 160px, 45vw" className="object-cover transition-transform duration-300 group-hover:scale-105" />
+              </span>
+              <span className="block truncate bg-surface px-2 py-1.5 text-xs font-medium text-fg">{c.label}</span>
+              {on && (
+                <span className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-bean-600 text-white">
+                  <Check className="size-3.5" strokeWidth={3} />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }

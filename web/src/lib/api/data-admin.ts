@@ -6,6 +6,7 @@ import * as mock from "./mock-admin";
 import { mockCoaches, mockModules, mockSessions, mockShortCourses } from "./mock";
 import * as mstore from "./mock-store";
 import * as analytics from "./mock-analytics";
+import { PROGRAM_COVER } from "../course-covers";
 
 /** Admin console data. Every call re-checks the role server-side. */
 
@@ -16,22 +17,22 @@ export async function getOverview(): Promise<AdminOverview> {
 
 export async function getLeads(): Promise<Lead[]> {
   await requireRole();
-  return isMock ? mock.mockLeads(new Date()).map((l) => ({ ...l, status: mstore.store.leadStatus.get(l.id) ?? l.status })) : apiFetch<Lead[]>("/admin/leads");
+  return isMock ? mstore.applyOverlay(mock.mockLeads(new Date()), mstore.store.leads).map((l) => ({ ...l, status: mstore.store.leadStatus.get(l.id) ?? l.status })) : apiFetch<Lead[]>("/admin/leads");
 }
 
 export async function getStudents(): Promise<StudentRow[]> {
   await requireRole();
-  return isMock ? mock.mockStudents(new Date()) : apiFetch<StudentRow[]>("/admin/students");
+  return isMock ? mstore.applyOverlay(mock.mockStudents(new Date()), mstore.store.students) : apiFetch<StudentRow[]>("/admin/students");
 }
 
 export async function getAdminPayments(): Promise<PaymentRow[]> {
   await requireRole();
-  return isMock ? mock.mockAdminPayments(new Date()) : apiFetch<PaymentRow[]>("/admin/payments");
+  return isMock ? mstore.applyOverlay(mock.mockAdminPayments(new Date()), mstore.store.payments) : apiFetch<PaymentRow[]>("/admin/payments");
 }
 
 export async function getBatches(): Promise<BatchSummary[]> {
   await requireRole();
-  return isMock ? mock.mockBatches(new Date()) : apiFetch<BatchSummary[]>("/admin/batches");
+  return isMock ? mstore.applyOverlay(mock.mockBatches(new Date()), mstore.store.batches) : apiFetch<BatchSummary[]>("/admin/batches");
 }
 
 export async function getAdminSessions(): Promise<ClassSession[]> {
@@ -88,15 +89,34 @@ export async function getAdminCourses(): Promise<Course[]> {
     tagline: "The 16-week cohort program. Weekly recordings unlock with the live classes.",
     kind: "program",
     level: "Advanced",
+    cover: PROGRAM_COVER,
     coach: mockCoaches()[0]!,
     modules: await getCourseModules(),
     status: "published",
   };
   const builtIn = mockShortCourses().map((c) => ({ ...c, status: "published" as const }));
-  return [...mstore.store.createdCourses, program, ...builtIn];
+  // built-ins carry any admin edits; removed ones drop out
+  const edited = [program, ...builtIn].map(mstore.withCourseEdits).filter((c): c is Course => c !== null);
+  return [...mstore.store.createdCourses, ...edited];
 }
 
 export async function getCoaches(): Promise<Coach[]> {
   await requireRole();
   return isMock ? mockCoaches() : apiFetch<Coach[]>("/admin/coaches");
+}
+
+/** One course for the edit page. `fullEdit` is false for built-in courses (details and photo only). */
+export async function getAdminCourse(slug: string): Promise<{ course: Course; fullEdit: boolean } | null> {
+  await requireRole(["super_admin", "admin"]);
+  if (!isMock) {
+    try {
+      const course = await apiFetch<Course & { builtIn?: boolean }>(`/admin/courses/${encodeURIComponent(slug)}`);
+      return { course, fullEdit: !course.builtIn };
+    } catch {
+      return null;
+    }
+  }
+  const course = (await getAdminCourses()).find((c) => c.slug === slug);
+  if (!course) return null;
+  return { course, fullEdit: mstore.store.createdCourses.some((c) => c.slug === slug) };
 }

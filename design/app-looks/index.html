@@ -1,0 +1,961 @@
+<title>Redbean App Looks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&family=Sora:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&family=Figtree:wght@400;500;600;700&family=Mukta:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a chooser page. Top: view switch. Body: a grid of scaled phone mockups. Bottom: fixed "your choice" bar. */
+:root{
+  --c-bg:#f4f2ef; --c-surface:#ffffff; --c-fg:#18171a; --c-muted:#65616a; --c-line:#e3dfd9;
+  --c-accent:#d91124; --c-accent-fg:#ffffff; --c-soft:#fbe9eb;
+  --f-ui:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --c-bg:#111013; --c-surface:#1b1a1e; --c-fg:#f1eff2; --c-muted:#a39fa8; --c-line:#2f2d34;
+    --c-accent:#ef2f3f; --c-accent-fg:#ffffff; --c-soft:#2c1619; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --c-bg:#111013; --c-surface:#1b1a1e; --c-fg:#f1eff2; --c-muted:#a39fa8; --c-line:#2f2d34;
+  --c-accent:#ef2f3f; --c-accent-fg:#ffffff; --c-soft:#2c1619; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--c-bg);color:var(--c-fg);font-family:var(--f-ui);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--c-accent);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 150px}
+.top{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.eyebrow{margin:0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-accent)}
+.top h1{font-size:clamp(26px,4vw,38px);line-height:1.1;letter-spacing:-.02em;margin:6px 0 8px;text-wrap:balance}
+.lede{color:var(--c-muted);max-width:64ch;margin:0}
+.views{display:flex;background:var(--c-line);padding:4px;border-radius:12px;gap:4px}
+.views button{border:0;background:transparent;height:40px;padding:0 16px;border-radius:9px;font-weight:600;color:var(--c-muted)}
+.views button[aria-selected="true"]{background:var(--c-surface);color:var(--c-fg);box-shadow:0 1px 2px rgb(0 0 0/.08)}
+
+.looks{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media (max-width:1000px){.looks{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:680px){.looks{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:440px){.looks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lk-btn{display:flex;align-items:center;gap:10px;min-height:56px;padding:9px 11px;border-radius:12px;border:1px solid var(--c-line);background:var(--c-surface);text-align:left;min-width:0}
+.lk-btn:hover{border-color:var(--c-muted)}
+.lk-btn[aria-checked="true"]{border-color:var(--c-accent);box-shadow:0 0 0 1px var(--c-accent)}
+.sw{width:32px;height:32px;border-radius:9px;flex:none;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08)}
+.lk-txt{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.lk-n{font-size:12px;color:var(--c-muted);display:flex;gap:6px;align-items:center}
+.lk-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tick{color:var(--c-accent);font-weight:700}
+
+.look-head{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center;justify-content:space-between;margin:18px 0 22px;padding:18px 20px;background:var(--c-surface);border:1px solid var(--c-line);border-radius:16px}
+.look-head h2{margin:0;font-size:22px;letter-spacing:-.01em}
+.look-head p{margin:2px 0 10px;color:var(--c-muted);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.fact{font-size:13px;padding:4px 10px;border-radius:99px;background:var(--c-bg);color:var(--c-muted)}
+.fact b{color:var(--c-fg);font-weight:600}
+.pick{height:48px;padding:0 20px;border-radius:12px;border:0;background:var(--c-accent);color:var(--c-accent-fg);font-weight:600;white-space:nowrap}
+.pick[aria-pressed="true"]{background:var(--c-fg);color:var(--c-bg)}
+
+.screens{display:flex;flex-wrap:wrap;gap:8px}
+.screens button{height:42px;padding:0 16px;border-radius:99px;border:1px solid var(--c-line);background:var(--c-surface);font-weight:600}
+.screens button[aria-selected="true"]{background:var(--c-fg);color:var(--c-bg);border-color:var(--c-fg)}
+.improve{margin:18px 0 22px;padding:18px 20px;background:var(--c-surface);border:1px solid var(--c-line);border-radius:16px}
+.improve h2{margin:0;font-size:17px}
+.improve ul{margin:8px 0 0;padding-left:18px;columns:2 300px;column-gap:36px;color:var(--c-muted)}
+.improve li{margin:3px 0;break-inside:avoid}
+
+.grid{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:30px 20px}
+.g6{--cols:7}
+@media (max-width:1399px){.g6{--cols:4}}
+@media (max-width:759px){.g6{--cols:2}}
+@media (max-width:519px){.g6{--cols:1}}
+.g12{--cols:6}
+@media (max-width:1279px){.g12{--cols:4}}
+@media (max-width:999px){.g12{--cols:3}}
+@media (max-width:759px){.g12{--cols:2}}
+@media (max-width:519px){.g12{--cols:1}}
+.cell{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cap{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;width:calc(360px*var(--s,.6));max-width:100%;margin-inline:auto}
+.cap-t{min-width:0;line-height:1.3}
+.cap-t b{display:block;font-weight:600}
+.cap-t span{font-size:13px;color:var(--c-muted)}
+.use{flex:none;height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--c-line);background:var(--c-surface);font-size:13px;font-weight:600}
+.use[aria-pressed="true"]{background:var(--c-accent);border-color:var(--c-accent);color:var(--c-accent-fg)}
+.slot{width:calc(360px*var(--s,.6));height:calc(740px*var(--s,.6));margin-inline:auto;max-width:100%}
+
+.choice{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--c-surface);border-top:1px solid var(--c-line);box-shadow:0 -8px 24px -12px rgb(0 0 0/.18);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.choice-in{max-width:1480px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.ch-l{margin:0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
+#ch-sum{margin:0;font-weight:600}
+.ch-act{display:flex;gap:8px}
+.ch-act button{height:44px;padding:0 16px;border-radius:11px;border:1px solid var(--c-line);background:var(--c-surface);font-weight:600}
+#ch-copy{background:var(--c-accent);border-color:var(--c-accent);color:var(--c-accent-fg)}
+#ch-fallback{width:100%;font:inherit;font-size:13px;padding:8px;border-radius:8px;border:1px solid var(--c-line);background:var(--c-bg);color:var(--c-fg)}
+
+/* ---------- Phone mockup ---------- */
+.dev{width:360px;height:740px;transform:scale(var(--s,.6));transform-origin:0 0;border-radius:56px;background:#0b0b0d;padding:8px;box-shadow:0 0 0 1.5px #34343a inset,0 24px 50px -24px rgb(0 0 0/.45)}
+.ph{width:344px;height:724px;border-radius:48px;overflow:hidden;position:relative;display:flex;flex-direction:column;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:calc(14px*var(--fs));line-height:1.4;-webkit-font-smoothing:antialiased}
+.ph *{box-sizing:border-box}
+.ph::before{content:"";position:absolute;top:11px;left:50%;width:94px;height:27px;margin-left:-47px;background:#000;border-radius:20px;z-index:6}
+.ph h1{font-family:var(--head);font-size:1.75em;line-height:1.15;font-weight:700;margin:0;letter-spacing:-.01em}
+.ph h2{font-family:var(--head);font-size:1.15em;line-height:1.25;font-weight:700;margin:0}
+.ph p{margin:0}
+.ph .ic{flex:none;display:block}
+.sb{position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0;font:700 14px/1 system-ui,sans-serif;z-index:5;color:var(--fg)}
+.sb-l{color:#fff}
+.sb-r{display:flex;gap:6px;align-items:center}
+.sg{width:17px;height:11px;background:currentColor;clip-path:polygon(0 100%,100% 0,100% 100%)}
+.bt{width:24px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative}
+.bt::after{content:"";position:absolute;inset:1.5px 6px 1.5px 1.5px;background:currentColor;border-radius:1.5px}
+.scr{flex:1;min-height:0;overflow:hidden;position:relative}
+.mt{color:var(--muted)}
+.sm{font-size:.88em}
+.xs{font-size:.78em}
+.ctr{text-align:center}
+.acc{color:var(--accent)}
+.big{font-family:var(--head);font-size:1.6em;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.big .mt{font-size:.6em;font-weight:600}
+.ttl{font-weight:700;line-height:1.28}
+.lbl{font-size:.76em;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px}
+.sp{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.col{display:flex;flex-direction:column;gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.hd{padding:52px 18px 16px;position:relative}
+.hd-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;font-size:.88em;font-weight:600}
+.hd .sub{margin-top:5px;color:var(--muted);font-size:.95em}
+.help{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:99px;font-weight:700;font-size:.92em;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);color:var(--fg)}
+.help-d{background:rgb(255 255 255/.14);box-shadow:none;color:#fff}
+.hd-dark{background:var(--hero);color:var(--heroFg);border-radius:0 0 30px 30px;padding-bottom:20px}
+.hd-dark .sub,.hd-dark .mt{color:var(--heroMuted)}
+.hd-curve{background:linear-gradient(155deg,var(--accent),var(--accent2));color:#fff;border-radius:0 0 36px 36px;padding-bottom:62px}
+.hd-curve .sub{color:rgb(255 255 255/.82)}
+.hd-curve + .bd{margin-top:-46px}
+.hd-photo{color:#fff;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;background-size:cover;background-position:center;border-radius:0 0 28px 28px}
+.hd-photo .sub{color:rgb(255 255 255/.85)}
+.hd-centered{text-align:center;padding-bottom:6px}
+.hd-centered .hd-top{text-align:left}
+.is-dark .hd-plain .help,.is-dark .hd-centered .help{background:var(--surface);color:var(--fg)}
+
+.bd{padding:14px 16px 20px;display:flex;flex-direction:column;gap:12px;position:relative}
+.card{background:var(--surface);border-radius:var(--r);padding:14px}
+.tight{padding:12px 14px}
+.c-shadow{box-shadow:0 1px 2px rgb(0 0 0/.05),0 8px 22px -10px rgb(0 0 0/.2)}
+.c-outline{box-shadow:inset 0 0 0 var(--bw) var(--line)}
+.c-tint{background:var(--tint)}
+.c-flat{}
+.dk{background:var(--hero);color:var(--heroFg)}
+.dk .mt{color:var(--heroMuted)}
+.dk .bar{background:rgb(255 255 255/.16)}
+.is-dark .dk{box-shadow:inset 0 0 0 1px var(--accentLine)}
+.nc-in{margin-top:16px;padding:14px;border-radius:calc(var(--r)*.8);background:rgb(255 255 255/.07);box-shadow:inset 0 0 0 1px rgb(255 255 255/.1)}
+.hd-photo .nc-in{background:rgb(0 0 0/.35)}
+.nc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.cd{display:inline-flex;align-items:center;gap:5px;font-size:.85em;font-weight:700}
+.nc-t{font-size:1.25em}
+.nc-a{display:grid;grid-template-columns:1.35fr 1fr;gap:8px;margin-top:12px;margin-bottom:8px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 14px;border-radius:calc(var(--r)*.62);background:var(--accent);color:var(--accentFg);font-weight:700;font-size:1em;white-space:nowrap}
+.btn-o{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn-w{background:rgb(255 255 255/.14);color:inherit}
+.btn-sm{height:40px;font-size:.9em;padding:0 12px}
+.icb{width:42px;height:42px;border-radius:calc(var(--r)*.6);display:grid;place-items:center;background:var(--tint);color:var(--accent);flex:none}
+.c-tint .icb{background:var(--surface)}
+.icb.s{width:36px;height:36px}
+.play{width:44px;height:44px;border-radius:99px;background:var(--accent);color:var(--accentFg);display:grid;place-items:center;flex:none}
+.img{background-size:cover;background-position:center;border-radius:calc(var(--r)*.6);flex:none}
+.pl{display:inline-flex;align-items:center;gap:4px;height:25px;padding:0 10px;border-radius:99px;font-size:.78em;font-weight:700;white-space:nowrap}
+.pl-live{background:var(--accent);color:var(--accentFg)}
+.pl-ok{background:var(--okBg);color:var(--ok)}
+.pl-bad{background:var(--badBg);color:var(--bad)}
+.pl-warn{background:var(--warnBg);color:var(--warn)}
+.pl-mut{background:var(--track);color:var(--fg)}
+.dk .pl-mut{background:rgb(255 255 255/.14);color:inherit}
+.bar{height:7px;border-radius:9px;background:var(--track);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:inherit}
+.seg{display:flex;background:var(--track);border-radius:14px;padding:4px;gap:4px}
+.seg span{flex:1;text-align:center;padding:9px 4px;border-radius:10px;font-weight:700;font-size:.9em;color:var(--muted);white-space:nowrap}
+.seg .on{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgb(0 0 0/.12)}
+.is-dark .seg .on{background:#2a2c35}
+.chips{display:flex;gap:6px;overflow:hidden}
+.chip{height:34px;padding:0 13px;border-radius:99px;display:inline-flex;align-items:center;font-size:.86em;font-weight:700;white-space:nowrap;box-shadow:inset 0 0 0 1.5px var(--line)}
+.chip.on{background:var(--fg);color:var(--bg);box-shadow:none}
+.lnk{display:inline-flex;align-items:center;gap:5px;color:var(--accent);font-weight:700;font-size:.88em}
+
+/* tab bars */
+.tb{flex:none;display:flex;justify-content:space-around;align-items:center;padding:8px 6px 24px;background:var(--navBg);position:relative;z-index:2}
+.ti{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.8em;font-weight:700;color:var(--navFg);flex:1;min-width:0;white-space:nowrap}
+.ip{padding:4px 14px;border-radius:99px;display:grid;place-items:center}
+.tb-pill .on{color:var(--navOn)}
+.tb-pill .on .ip{background:var(--pill)}
+.tb-line{box-shadow:0 -1px 0 var(--line)}
+.tb-line .ti{position:relative;padding-top:4px}
+.tb-line .on{color:var(--navOn)}
+.tb-line .on::before{content:"";position:absolute;top:-8px;left:26%;right:26%;height:3px;border-radius:0 0 4px 4px;background:var(--navOn)}
+.tb-float{margin:0 12px 22px;border-radius:26px;padding:7px;box-shadow:0 12px 30px -10px rgb(0 0 0/.4),0 0 0 1px rgb(0 0 0/.04)}
+.tb-float .ti{padding:5px 0 6px;border-radius:19px}
+.tb-float .ip{padding:2px 0}
+.tb-float .on{background:var(--pill);color:var(--navOn)}
+.tb-soft{box-shadow:0 -1px 0 var(--line)}
+.tb-soft .on{color:var(--navOn)}
+.tb-soft .on .ip{background:var(--pill)}
+.tb-big{padding:8px 8px 24px;gap:4px}
+.tb-big .ti{font-size:.86em;padding:8px 0 7px;border-radius:16px}
+.tb-big .ip{padding:2px 0}
+.tb-big .on{background:var(--pill);color:var(--navOn)}
+
+/* home: week dots + timeline */
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px}
+.wd b{width:32px;height:32px;border-radius:99px;display:grid;place-items:center;font-size:.9em;font-weight:700;background:var(--track)}
+.wd.ok b{background:var(--okBg);color:var(--ok)}
+.wd.bad b{background:var(--badBg);color:var(--bad)}
+.wd.today b{background:var(--accent);color:var(--accentFg)}
+.tl{display:flex;flex-direction:column;gap:10px;position:relative}
+.tl::before{content:"";position:absolute;left:75px;top:18px;bottom:18px;width:2px;background:var(--line)}
+.tli{display:grid;grid-template-columns:62px 14px 1fr;gap:8px;align-items:start}
+.tlt{font-size:.8em;font-weight:700;color:var(--muted);padding-top:13px;text-align:right;white-space:nowrap}
+.tld{width:12px;height:12px;border-radius:99px;margin-top:16px;background:var(--bg);box-shadow:inset 0 0 0 2.5px var(--line);position:relative;z-index:1}
+.tli.now .tld{box-shadow:inset 0 0 0 3.5px var(--accent)}
+.tli.done .tld{background:var(--ok);box-shadow:none}
+.tlc{padding:12px}
+
+/* classes */
+.ds{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.dsd{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;border-radius:14px;font-size:.76em;color:var(--muted);font-weight:700}
+.dsd b{font-size:1.4em;color:var(--fg);line-height:1.1}
+.dsd i{width:6px;height:6px;border-radius:9px}
+.dsd.ok i{background:var(--ok)}
+.dsd.bad i{background:var(--bad)}
+.dsd.on{background:var(--accent);color:var(--accentFg)}
+.dsd.on b{color:inherit}
+.dsd.on i{background:currentColor}
+.dt{width:48px;flex:none;text-align:center;border-radius:12px;background:var(--track);padding:6px 0;display:flex;flex-direction:column}
+.c-tint .dt{background:var(--surface)}
+.dt b{font-size:1.3em;line-height:1.05;font-family:var(--head)}
+.dt span{font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase}
+.ag{display:flex;gap:12px}
+.agd{width:42px;flex:none;text-align:center;padding-top:6px}
+.agd b{display:block;font-size:1.6em;line-height:1;font-family:var(--head)}
+.agd span{font-size:.72em;font-weight:700;color:var(--muted)}
+.agd.on b{color:var(--accent)}
+.kind{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+
+/* learn */
+.cv{aspect-ratio:16/8;background-size:cover;background-position:center;position:relative}
+.cv .pl{position:absolute;left:10px;top:10px;background:rgb(0 0 0/.62);color:#fff}
+.flush{padding:0;overflow:hidden}
+.pad{padding:12px 14px 14px}
+.vid{aspect-ratio:16/9;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
+.vid .play{width:58px;height:58px;box-shadow:0 6px 20px rgb(0 0 0/.35)}
+.vbar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgb(255 255 255/.3)}
+.vbar i{display:block;height:100%;width:60%;background:var(--accent)}
+.vtime{position:absolute;right:10px;bottom:12px;font-size:.78em;font-weight:700;color:#fff;background:rgb(0 0 0/.55);padding:2px 7px;border-radius:6px}
+.mod{display:flex;align-items:center;gap:10px;padding:10px 0}
+.mod + .mod{box-shadow:0 -1px 0 var(--line)}
+.ls{display:flex;align-items:center;gap:10px;padding:7px 0 7px 6px;font-size:.92em}
+.lsi{width:26px;height:26px;border-radius:99px;display:grid;place-items:center;flex:none;background:var(--track);color:var(--muted)}
+.lsi.ok{background:var(--okBg);color:var(--ok)}
+.lsi.cur{background:var(--accent);color:var(--accentFg)}
+
+/* homework */
+.cbx{width:28px;height:28px;border-radius:99px;box-shadow:inset 0 0 0 2px var(--line);flex:none;display:grid;place-items:center}
+.cbx.on{background:var(--ok);color:#fff;box-shadow:none}
+.drop{border:2px dashed var(--line);border-radius:calc(var(--r)*.7);padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-weight:600;text-align:center}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.note{margin-top:10px;padding:10px 12px;border-radius:calc(var(--r)*.55);background:var(--track);font-size:.9em}
+
+/* more */
+.grp{padding:2px 14px}
+.lr{display:flex;align-items:center;gap:12px;padding:11px 0}
+.lr + .lr{box-shadow:0 -1px 0 var(--line)}
+.av{width:48px;height:48px;border-radius:99px;display:grid;place-items:center;font-weight:700;background:var(--tint);color:var(--accent);flex:none;font-size:1.05em}
+.dk .av,.hd-dark .av{background:rgb(255 255 255/.14);color:#fff}
+.av.lg{width:58px;height:58px;font-size:1.2em}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{padding:10px;border-radius:calc(var(--r)*.6);background:rgb(255 255 255/.08);text-align:center}
+.stat b{display:block;font-family:var(--head);font-size:1.25em}
+.stat span{font-size:.78em;opacity:.75}
+.tg{width:44px;height:26px;border-radius:99px;background:var(--accent);position:relative;flex:none}
+.tg::after{content:"";position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:99px;background:#fff}
+.mseg{display:flex;background:var(--track);border-radius:10px;padding:3px;flex:none}
+.mseg span{padding:5px 9px;border-radius:8px;font-size:.8em;font-weight:700;color:var(--muted)}
+.mseg .on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgb(0 0 0/.12)}
+.is-dark .mseg .on{background:#2a2c35}
+
+/* login */
+.form{display:flex;flex-direction:column;gap:14px}
+.fl{display:flex;flex-direction:column;gap:6px}
+.fll{font-size:.88em;font-weight:700}
+.inp{height:54px;border-radius:calc(var(--r)*.62);box-shadow:inset 0 0 0 2px var(--accent);background:var(--surface);display:flex;align-items:center;gap:10px;padding:0 14px;font-size:1.05em;color:var(--fg)}
+.inp b{padding-right:10px;box-shadow:1.5px 0 0 var(--line)}
+.lang{display:inline-flex;padding:3px;border-radius:99px;background:var(--track);font-size:.82em}
+.lang b{padding:4px 10px;border-radius:99px;color:var(--muted)}
+.lang .on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgb(0 0 0/.12)}
+.lang-d{background:rgb(255 255 255/.16)}
+.lang-d b{color:rgb(255 255 255/.8)}
+.lang-d .on{background:#fff;color:#111}
+.mk{width:64px;height:64px;border-radius:99px;background:#fff;display:grid;place-items:center;flex:none}
+.mk img{width:60%;height:auto;display:block}
+.mk-sm{width:38px;height:38px;background:var(--tint)}
+.mk-md{width:76px;height:76px}
+.wm{font-family:var(--head);font-weight:700;font-size:1.45em;letter-spacing:-.01em}
+.ls-top{background:var(--hero);color:var(--heroFg);padding:52px 18px 22px;border-radius:0 0 34px 34px;text-align:center}
+.ls-tag{color:var(--heroMuted);font-size:.9em;margin-top:2px}
+.orb{position:relative;width:210px;height:150px;margin:0 auto 10px}
+.ob{position:absolute;width:56px;height:56px;border-radius:99px;background-size:cover;background-position:center;box-shadow:0 0 0 3px var(--hero),0 0 0 4.5px rgb(255 255 255/.35)}
+.ob0{left:2px;top:4px}.ob1{right:2px;top:4px}.ob2{left:22px;bottom:0}.ob3{right:22px;bottom:0}
+.orb .mk{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px}
+.ls-form{padding:20px 18px}
+.lm{padding:54px 20px 22px;display:flex;flex-direction:column;height:100%}
+.lm-help{margin-top:auto}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85em}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.lc-top{background:linear-gradient(155deg,var(--accent),var(--accent2));color:#fff;padding:52px 20px 74px;border-radius:0 0 42px 42px;text-align:center}
+.lc-top .mk{margin:0 auto 12px}
+.lc-sub{opacity:.88;margin-top:6px}
+.lc-card{margin:-50px 16px 0;padding:18px;position:relative}
+.lc-foot{display:flex;justify-content:center;gap:8px;padding:16px}
+.lp{height:340px;padding:52px 18px 44px;background-size:cover;background-position:center;color:#fff;display:flex;flex-direction:column;justify-content:space-between}
+.lp-k{font-size:.85em;font-weight:700;opacity:.9;margin-bottom:6px}
+.lp-sheet{margin-top:-28px;background:var(--bg);border-radius:28px 28px 0 0;padding:22px 18px;position:relative}
+.lk{padding:54px 18px 20px;display:flex;flex-direction:column;gap:16px;height:100%}
+.lk-card{display:flex;flex-direction:column;gap:14px;padding:22px;text-align:center}
+.lk-card .mk{margin:0 auto}
+.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.otp span{height:52px;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line);display:grid;place-items:center;font-size:1.4em;font-weight:700;background:var(--surface)}
+.otp .f{box-shadow:inset 0 0 0 2.5px var(--accent)}
+.back{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+
+/* certificate */
+.cert{position:relative;aspect-ratio:1.414/1;border-radius:10px;background:#fffdf6;color:#2a2117;padding:7px;box-shadow:0 1px 2px rgb(0 0 0/.06),0 10px 24px -12px rgb(0 0 0/.3)}
+.cert-in{height:100%;box-shadow:inset 0 0 0 1.5px var(--accent),inset 0 0 0 4px #fffdf6,inset 0 0 0 5px rgb(0 0 0/.1);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 14px;text-align:center;gap:2px}
+.cert-mk{width:24px;height:auto}
+.cert-k{font-size:.66em;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.cert-n{font-family:var(--head);font-size:1.4em;font-weight:700;line-height:1.15;margin-top:2px}
+.cert-p{font-size:.72em;color:#6b5f52}
+.cert-f{display:flex;justify-content:space-between;align-items:flex-end;width:100%;margin-top:8px;font-size:.62em;line-height:1.3;text-align:left;color:#6b5f52}
+.cert-f b{color:#2a2117}
+.qr{width:32px;height:32px;flex:none;background:repeating-conic-gradient(#2a2117 0 25%,#fffdf6 0 50%) 0 0/8px 8px;border-radius:2px;box-shadow:0 0 0 2px #fffdf6,0 0 0 3px #2a2117}
+.cert-lock{position:absolute;inset:0;border-radius:10px;background:rgb(255 253 246/.5);display:flex;align-items:flex-start;justify-content:flex-end;padding:12px}
+.cert-mini .cert-lock{padding:5px}
+.cert-lock .pl{background:#ffffff;color:#2a2117;box-shadow:0 2px 10px rgb(0 0 0/.18);height:30px;font-size:.85em}
+.cert-mini{width:104px;flex:none;font-size:6.2px}
+.cert-mini .cert{padding:3px;border-radius:5px}
+.cert-mini .cert-lock{border-radius:5px}
+.cert-mini .cert-lock .pl{height:18px;font-size:8px;padding:0 6px}
+.cert-mini .cert-mk{width:12px}
+.cert-mini .qr{width:14px;height:14px;background-size:3.5px 3.5px}
+.btn-off{opacity:.5}
+.tlt .ic{margin-left:auto}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Redbean Academy · mobile app</p>
+      <h1>Choose the app’s look</h1>
+      <p class="lede">12 looks, each shown on all 7 screens with the same improvements. Pick one look for the whole app, or open “By screen” and pick a different look for any screen.</p>
+    </div>
+    <div class="views" role="tablist" aria-label="View">
+      <button id="v-design" role="tab" aria-selected="true">By look</button>
+      <button id="v-screen" role="tab" aria-selected="false">By screen</button>
+    </div>
+  </header>
+
+  <section id="by-design" aria-label="By look">
+    <div class="looks" id="looks" role="radiogroup" aria-label="Looks"></div>
+    <div class="look-head" id="look-head"></div>
+    <div class="grid g6" id="g-design"></div>
+  </section>
+
+  <section id="by-screen" aria-label="By screen" hidden>
+    <div class="screens" id="screens" role="tablist" aria-label="Screens"></div>
+    <div class="improve" id="improve"></div>
+    <div class="grid g12" id="g-screen"></div>
+  </section>
+</div>
+
+<div class="choice" role="region" aria-label="Your choice">
+  <div class="choice-in">
+    <div>
+      <p class="ch-l">Your choice</p>
+      <p id="ch-sum">Nothing picked yet.</p>
+    </div>
+    <div class="ch-act">
+      <button id="ch-copy" type="button">Copy choice</button>
+      <button id="ch-clear" type="button">Clear</button>
+    </div>
+    <textarea id="ch-fallback" rows="2" readonly hidden aria-label="Choice text to copy"></textarea>
+  </div>
+</div>
+
+<script>
+const IMG = {
+  group: "img/community-group.webp", hosp: "img/sector-hospitals.webp", corp: "img/sector-corporate.webp",
+  ind: "img/sector-industries.webp", inst: "img/sector-institutions.webp", mark: "img/redbean-mark.png",
+};
+
+/* Shared status colours (light) and the dark-look override. */
+const LIGHT_SEM = { ok: "#15803d", okBg: "#dcfce7", bad: "#b91c1c", badBg: "#fee2e2", warn: "#92400e", warnBg: "#fef3c7", track: "rgb(0 0 0/.07)" };
+const DARK_SEM = { ok: "#4ade80", okBg: "rgb(74 222 128/.14)", bad: "#f87171", badBg: "rgb(248 113 113/.15)", warn: "#fbbf24", warnBg: "rgb(251 191 36/.14)", track: "rgb(255 255 255/.08)" };
+
+const LOOKS = [
+  { id: 1, name: "Classic", tag: "Today’s Redbean look, cleaned up. Dark top card, red pill in a dark menu.",
+    font: "'Geist',system-ui,sans-serif", fontName: "Geist", bg: "#f6f3ee", surface: "#ffffff", fg: "#15151a", muted: "#676b74", line: "#e6e1d9",
+    accent: "#e01426", accent2: "#a50a19", accentFg: "#ffffff", tint: "#fdecee", hero: "#0b0b0f", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.66)",
+    navBg: "#0b0b0f", navFg: "rgb(255 255 255/.6)", navOn: "#ffffff", pill: "#e01426", r: 20,
+    header: "dark", ns: "pill", card: "shadow", login: "split", home: "hero", classes: "datestrip", learn: "covers", hw: "cards", more: "list", cert: "steps" },
+  { id: 2, name: "Clean White", tag: "All white with thin lines. Red only on the main button and the active tab.",
+    font: "'Inter',system-ui,sans-serif", fontName: "Inter", bg: "#ffffff", surface: "#ffffff", fg: "#111827", muted: "#6b7280", line: "#e5e7eb",
+    accent: "#d91124", accent2: "#a10d1c", accentFg: "#ffffff", tint: "#fff1f2", hero: "#111827", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.66)",
+    navBg: "#ffffff", navFg: "#6b7280", navOn: "#d91124", pill: "transparent", r: 14,
+    header: "plain", ns: "line", card: "outline", login: "minimal", home: "list", classes: "agenda", learn: "list", hw: "checklist", more: "list", cert: "path" },
+  { id: 3, name: "Warm", tag: "Soft peach background, round corners, a friendly rounded font.",
+    font: "'Nunito',system-ui,sans-serif", fontName: "Nunito", bg: "#fff4ef", surface: "#ffffff", fg: "#2a1a17", muted: "#7a625c", line: "#f0ddd5",
+    accent: "#e2412f", accent2: "#b52817", accentFg: "#ffffff", tint: "#ffe6de", hero: "#e2412f", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.8)",
+    navBg: "#ffffff", navFg: "#8a716b", navOn: "#e2412f", pill: "#ffe1d9", r: 26,
+    header: "centered", ns: "soft", card: "flat", login: "curve", home: "tiles", classes: "cards", learn: "covers", hw: "tabs", more: "grid", cert: "preview" },
+  { id: 4, name: "Bold Red", tag: "Big red curved top, white cards over it, floating dark menu.",
+    font: "'Poppins',system-ui,sans-serif", fontName: "Poppins", bg: "#f7f5f5", surface: "#ffffff", fg: "#1b1214", muted: "#6f6466", line: "#ece6e6",
+    accent: "#e01426", accent2: "#8f0915", accentFg: "#ffffff", tint: "#fdeaec", hero: "#1b1214", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.66)",
+    navBg: "#1b1214", navFg: "rgb(255 255 255/.62)", navOn: "#ffffff", pill: "#e01426", r: 22,
+    header: "curve", ns: "float", card: "shadow", login: "curve", home: "hero", classes: "datestrip", learn: "continue", hw: "cards", more: "profile", cert: "preview" },
+  { id: 5, name: "Midnight", tag: "Full dark mode. Easy on the eyes at night classes.", dark: true,
+    font: "'Sora',system-ui,sans-serif", fontName: "Sora", bg: "#0c0d11", surface: "#16171d", fg: "#f3f3f5", muted: "#9a9ca6", line: "#272933",
+    accent: "#ff3d4d", accent2: "#b3141f", accentFg: "#ffffff", tint: "#2a1316", hero: "#1d1f27", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.62)", accentLine: "rgb(255 61 77/.45)",
+    navBg: "#111217", navFg: "#7c7f8a", navOn: "#ff3d4d", pill: "transparent", r: 18,
+    header: "plain", ns: "line", card: "outline", login: "photo", home: "hero", classes: "agenda", learn: "covers", hw: "tabs", more: "list", cert: "steps" },
+  { id: 6, name: "Big & Easy", tag: "Largest text, thick borders, big labelled buttons. Best for older students.",
+    font: "'Lexend',system-ui,sans-serif", fontName: "Lexend", fs: 1.12, bw: 2, bg: "#ffffff", surface: "#ffffff", fg: "#000000", muted: "#3f3f46", line: "#d4d4d8",
+    accent: "#c8102e", accent2: "#8c0b20", accentFg: "#ffffff", tint: "#fde8eb", hero: "#18181b", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.72)",
+    navBg: "#ffffff", navFg: "#3f3f46", navOn: "#ffffff", pill: "#c8102e", r: 16,
+    header: "centered", ns: "big", card: "outline", login: "minimal", home: "list", classes: "cards", learn: "list", hw: "checklist", more: "list", cert: "steps" },
+  { id: 7, name: "Royal Gold", tag: "Black and gold with a classic serif. Feels premium, like a coaching club.",
+    font: "'DM Sans',system-ui,sans-serif", head: "'DM Serif Display',Georgia,serif", fontName: "DM Serif + DM Sans", bg: "#f5f0e6", surface: "#fffdf8", fg: "#1a160f", muted: "#6d6556", line: "#e4dccb",
+    accent: "#a8781f", accent2: "#6e4c10", accentFg: "#ffffff", tint: "#f3e8cf", hero: "#16130e", heroFg: "#f8f1e2", heroMuted: "rgb(248 241 226/.62)",
+    navBg: "#16130e", navFg: "rgb(248 241 226/.55)", navOn: "#16130e", pill: "#d4a845", r: 14,
+    header: "dark", ns: "pill", card: "outline", login: "photo", home: "hero", classes: "agenda", learn: "continue", hw: "cards", more: "profile", cert: "preview" },
+  { id: 8, name: "Fresh Green", tag: "Green for food and health. Curved green top, floating white menu.",
+    font: "'Plus Jakarta Sans',system-ui,sans-serif", fontName: "Plus Jakarta Sans", bg: "#f2f7f3", surface: "#ffffff", fg: "#10231a", muted: "#5b6e63", line: "#dce8df",
+    accent: "#0f8a5f", accent2: "#0a5c40", accentFg: "#ffffff", tint: "#e0f2e9", hero: "#10231a", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.66)",
+    navBg: "#ffffff", navFg: "#6b7d72", navOn: "#ffffff", pill: "#0f8a5f", r: 22,
+    header: "curve", ns: "float", card: "flat", login: "card", home: "tiles", classes: "datestrip", learn: "covers", hw: "tabs", more: "grid", cert: "path" },
+  { id: 9, name: "Ocean Blue", tag: "Calm blue, like a bank app. Day plan on Home, navy floating menu.",
+    font: "'Manrope',system-ui,sans-serif", fontName: "Manrope", bg: "#f2f5fa", surface: "#ffffff", fg: "#0f1a2e", muted: "#5a6478", line: "#dfe5ef",
+    accent: "#2156d9", accent2: "#163c9c", accentFg: "#ffffff", tint: "#e6edfc", hero: "#0f1a2e", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.64)",
+    navBg: "#0f1a2e", navFg: "rgb(255 255 255/.6)", navOn: "#ffffff", pill: "#2156d9", r: 18,
+    header: "plain", ns: "float", card: "shadow", login: "card", home: "timeline", classes: "agenda", learn: "list", hw: "cards", more: "profile", cert: "steps" },
+  { id: 10, name: "Photo First", tag: "Real Redbean photos at the top of every screen.",
+    font: "'Outfit',system-ui,sans-serif", fontName: "Outfit", bg: "#faf8f6", surface: "#ffffff", fg: "#17131a", muted: "#6b6570", line: "#ebe6e2",
+    accent: "#e01426", accent2: "#a50a19", accentFg: "#ffffff", tint: "#fdecee", hero: "#17131a", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.66)",
+    navBg: "#ffffff", navFg: "#7a7480", navOn: "#e01426", pill: "transparent", r: 20,
+    header: "photo", ns: "line", card: "shadow", login: "photo", home: "hero", classes: "cards", learn: "covers", hw: "cards", more: "profile", cert: "preview" },
+  { id: 11, name: "Day Planner", tag: "Teal and calm. Home is a timeline of today, step by step.",
+    font: "'Figtree',system-ui,sans-serif", fontName: "Figtree", bg: "#f3f7f7", surface: "#ffffff", fg: "#0f2224", muted: "#587073", line: "#d9e5e5",
+    accent: "#0b7f88", accent2: "#07555b", accentFg: "#ffffff", tint: "#def1f2", hero: "#0f2224", heroFg: "#ffffff", heroMuted: "rgb(255 255 255/.64)",
+    navBg: "#0f2224", navFg: "rgb(255 255 255/.6)", navOn: "#ffffff", pill: "#0b7f88", r: 16,
+    header: "plain", ns: "pill", card: "outline", login: "split", home: "timeline", classes: "agenda", learn: "continue", hw: "checklist", more: "list", cert: "path" },
+  { id: 12, name: "Desi Warm", tag: "Hindi first, saffron and maroon, big labelled menu.", hi: true,
+    font: "'Mukta',system-ui,sans-serif", fontName: "Mukta", fs: 1.06, bg: "#fff7ec", surface: "#ffffff", fg: "#2b1208", muted: "#7a5a48", line: "#f0dcc4",
+    accent: "#d9480f", accent2: "#9c300a", accentFg: "#ffffff", tint: "#ffe8d2", hero: "#5c0f16", heroFg: "#fff3e6", heroMuted: "rgb(255 243 230/.68)",
+    navBg: "#5c0f16", navFg: "rgb(255 243 230/.66)", navOn: "#ffffff", pill: "#d9480f", r: 20,
+    header: "dark", ns: "big", card: "tint", login: "curve", home: "tiles", classes: "cards", learn: "covers", hw: "tabs", more: "grid", cert: "preview" },
+];
+
+const SCREENS = [
+  { id: "login", name: "Login" }, { id: "home", name: "Home" }, { id: "classes", name: "Classes" },
+  { id: "learn", name: "Learn" }, { id: "homework", name: "Homework" }, { id: "more", name: "More" },
+  { id: "certificate", name: "Certificate" },
+];
+const KEY = { login: "login", home: "home", classes: "classes", learn: "learn", homework: "hw", more: "more", certificate: "cert" };
+
+const IMPROVE = {
+  login: ["One box for WhatsApp number or email, with +91 already there.", "Big “Get code on WhatsApp” button. No password to remember.", "English / हिंदी switch on the very first screen.", "A help line to call or WhatsApp the team if login fails.", "Look 8 and 9 show the next step: six boxes for the code, with a resend timer."],
+  home: ["Next class at the top with a countdown, Join and Remind me.", "Says when Join opens: 10 minutes before the class.", "Continue lesson shows the exact minute you stopped.", "Lessons done, attendance and homework due at a glance.", "A labelled Help button on every screen, not an icon."],
+  classes: ["A week strip or a day list, so the next class is easy to find.", "Clear status on every class: Live, Attended ✓, Missed ✗.", "“Watch recording” right on the class you missed.", "Filters for Live class, Mentorship and Webinar.", "All times in Indian time (IST)."],
+  learn: ["Course cards with photos and a progress bar.", "Continue card opens the lesson at the minute you stopped.", "Lessons grouped by month: done ✓, current, and locked.", "Course videos and class recordings in separate tabs."],
+  homework: ["Due date with days left on every task.", "Status in plain words: To do, Sent, Marks given.", "The coach’s note shows under the marks.", "One “Send answer” button with photo or PDF upload."],
+  more: ["Profile card with batch, attendance and marks.", "Fees due shown in amber so it is not missed.", "Language and text size right here, for older students.", "Big Help card with Call and WhatsApp."],
+  certificate: ["Shows exactly how many steps are left: 3 of 5 done.", "Each step says where you stand: attendance 92%, 18 of 64 lessons.", "A preview of the real certificate, locked until the final test.", "The PDF has a QR code anyone can scan to check it is real.", "Download and Share buttons, and it is also sent on WhatsApp.", "Opened from More → Certificate, so the menu shows More."],
+};
+
+const FACT = {
+  header: { dark: "Dark top panel", plain: "Plain top", curve: "Coloured curved top", photo: "Photo top", centered: "Centred title" },
+  ns: { pill: "Dark menu, coloured pill", line: "White menu, top line", float: "Floating menu", soft: "White menu, soft pill", big: "Big labelled menu" },
+  card: { shadow: "Soft shadow cards", outline: "Outlined cards", flat: "Flat white cards", tint: "Tinted cards" },
+};
+
+/* ---------- icons ---------- */
+const CIRCLE = "M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z";
+const ICON = {
+  home: "M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1z",
+  video: "M3 7.5A1.5 1.5 0 0 1 4.5 6h9A1.5 1.5 0 0 1 15 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 3 16.5zM15 10.5l6-3.5v10l-6-3.5",
+  play: CIRCLE + "M10 8.5v7l6-3.5z",
+  tri: "M8 5.5v13l11-6.5z",
+  doc: "M6 3h8l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v4h4M8.5 12h7M8.5 16h7",
+  menu: "M4 7h16M4 12h16M4 17h16",
+  clock: CIRCLE + "M12 7.5V12l3 2",
+  check: "M5 12.5l4.5 4.5L19 7.5",
+  x: "M6.5 6.5l11 11M17.5 6.5l-11 11",
+  chev: "M9.5 6l6 6-6 6",
+  back: "M14.5 6l-6 6 6 6",
+  phone: "M6.5 3.5h3l1.8 4.6-2.3 1.5a11 11 0 0 0 5.4 5.4l1.5-2.3 4.6 1.8v3a2 2 0 0 1-2 2A16.5 16.5 0 0 1 4.5 5.5a2 2 0 0 1 2-2z",
+  chat: "M4 20.5l1.4-4A8.5 8.5 0 1 1 8.6 19.3z",
+  rupee: "M7 4.5h10M7 8.5h10M10 4.5c4.5 0 4.5 8 0 8H7.5l7 7",
+  cal: "M4.5 6h15v14.5h-15zM4.5 10h15M8.5 3.5v4M15.5 3.5v4",
+  gear: "M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1",
+  out: "M14.5 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 8l-4 4 4 4M6 12h9.5",
+  bell: "M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 1.5h-15zM10 20.5h4",
+  lock: "M6 11h12v10H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3",
+  globe: CIRCLE + "M3 12h18M12 3c3.2 3.2 3.2 14.8 0 18M12 3c-3.2 3.2-3.2 14.8 0 18",
+  upload: "M12 15.5V4.5M7.5 9 12 4.5 16.5 9M5 19.5h14",
+  award: "M12 3a6 6 0 1 0 0 12a6 6 0 1 0 0-12zM8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7",
+  qa: "M4 5h16v11H9l-5 4zM9 9.5h6",
+  text: "M4 18 8.5 6h1L14 18M5.5 14h6.5M15 18l2.75-7h.5L21 18M15.8 16h4.4",
+  mail: "M3.5 6h17v12h-17zM3.5 7l8.5 6.5L20.5 7",
+  download: "M12 4.5v11M7.5 11 12 15.5 16.5 11M5 19.5h14",
+  share: "M8.5 12a2.5 2.5 0 1 1-5 0a2.5 2.5 0 1 1 5 0zM20.5 6a2.5 2.5 0 1 1-5 0a2.5 2.5 0 1 1 5 0zM20.5 18a2.5 2.5 0 1 1-5 0a2.5 2.5 0 1 1 5 0zM8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6",
+};
+function ic(n, size = 20) {
+  return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICON[n]}"/></svg>`;
+}
+
+/* ---------- render helpers (C = look being drawn) ---------- */
+let C = LOOKS[0];
+const t = (en, hi) => (C.hi ? hi : en);
+const pill = (txt, tone) => `<span class="pl pl-${tone}">${txt}</span>`;
+const card = (inner, cls = "") => `<div class="card c-${C.card} ${cls}">${inner}</div>`;
+const segBlock = (html) => (C.header === "curve" ? card(html, "tight") : html);
+const NAME = () => t("Namaste, Rajesh", "नमस्ते, राजेश जी");
+const BATCH = () => t("CGR Batch 7 · Week 6 of 16", "CGR बैच 7 · हफ़्ता 6 / 16");
+const WD = () => (C.hi ? ["सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि", "रवि"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+
+function header(o) {
+  const h = C.header;
+  const onDark = h === "dark" || h === "curve" || h === "photo";
+  const help = `<span class="help ${onDark ? "help-d" : ""}">${ic("phone", 15)}${t("Help", "मदद")}</span>`;
+  const top = `<div class="hd-top"><span>${o.top || t("Sat, 21 Nov", "शनि, 21 नवं")}</span>${help}</div>`;
+  const body = `<h1>${o.title}</h1>${o.sub ? `<p class="sub">${o.sub}</p>` : ""}${o.inner || ""}`;
+  if (h === "photo") {
+    return `<div class="hd hd-photo" style="background-image:linear-gradient(180deg,rgb(10 8 10/.55),rgb(10 8 10/.12) 40%,rgb(10 8 10/.86)),url(${o.photo || IMG.group})">${top}<div>${body}</div></div>`;
+  }
+  return `<div class="hd hd-${h}">${top}${body}</div>`;
+}
+
+function nextClass() {
+  return `<div class="nc-top">${pill(t("Today · 7:00 PM", "आज · शाम 7:00"), "live")}<span class="cd">${ic("clock", 15)}${t("in 2h 15m", "2 घं 15 मि में")}</span></div>
+  <h2 class="nc-t">${t("Kitchen layout for hospitals", "अस्पताल की किचन का लेआउट")}</h2>
+  <p class="mt sm" style="margin-top:3px">${t("Live class · Bobby Singh · 90 min", "लाइव क्लास · बॉबी सिंह जी · 90 मिनट")}</p>
+  <div class="nc-a"><span class="btn">${ic("video", 18)}${t("Join class", "क्लास से जुड़ें")}</span><span class="btn btn-w">${ic("bell", 18)}${t("Remind me", "याद दिलाएँ")}</span></div>
+  <p class="mt xs">${t("Join opens at 6:50 PM, 10 minutes before.", "शाम 6:50 से जुड़ सकते हैं, 10 मिनट पहले।")}</p>`;
+}
+
+function continueRow() {
+  return `<div class="row"><div class="img" style="width:62px;height:62px;background-image:url(${IMG.corp})"></div>
+  <div class="grow"><p class="lbl">${t("Continue", "आगे देखें")}</p><p class="ttl">${t("HACCP basics · Lesson 3", "HACCP की बुनियाद · पाठ 3")}</p>
+  <p class="mt sm">${t("You stopped at 12:40", "आप 12:40 पर रुके थे")}</p><div class="bar" style="margin-top:6px"><i style="width:60%"></i></div></div>
+  <span class="play">${ic("tri", 20)}</span></div>`;
+}
+
+const bigRow = (icon, title, detail, right) =>
+  card(`<div class="row"><span class="icb">${ic(icon, 21)}</span><div class="grow"><p class="ttl">${title}</p><p class="mt sm">${detail}</p></div>${right || `<span class="mt">${ic("chev", 20)}</span>`}</div>`, "tight");
+
+const tile = (icon, val, label) => card(`<span class="icb">${ic(icon, 20)}</span><p class="big" style="margin-top:10px">${val}</p><p class="mt sm">${label}</p>`);
+
+function helpCard() {
+  return card(`<div class="row"><span class="icb">${ic("phone", 20)}</span><div class="grow"><p class="ttl">${t("Need help?", "मदद चाहिए?")}</p><p class="mt sm">${t("Talk to the Redbean team", "रेडबीन टीम से बात करें")}</p></div></div>
+  <div class="g2" style="margin-top:12px"><span class="btn btn-sm btn-o">${ic("phone", 16)}${t("Call", "कॉल करें")}</span><span class="btn btn-sm btn-o">${ic("chat", 16)}WhatsApp</span></div>`);
+}
+
+function lang(onDark) {
+  return `<span class="lang ${onDark ? "lang-d" : ""}"><b class="${C.hi ? "" : "on"}">EN</b><b class="${C.hi ? "on" : ""}">हिंदी</b></span>`;
+}
+
+const R = { login: {}, home: {}, classes: {}, learn: {}, homework: {}, more: {}, certificate: {} };
+
+/* ---------- HOME ---------- */
+R.home.hero = () => {
+  const inHead = C.header === "dark";
+  return header({ title: NAME(), sub: BATCH(), inner: inHead ? `<div class="nc-in">${nextClass()}</div>` : "", photo: IMG.group }) +
+  `<div class="bd">${inHead ? "" : `<div class="card dk">${nextClass()}</div>`}
+  <div class="g2">${card(`<p class="mt sm">${t("Lessons done", "पूरे पाठ")}</p><p class="big">18<span class="mt">/64</span></p><div class="bar" style="margin-top:8px"><i style="width:28%"></i></div>`)}
+  ${card(`<p class="mt sm">${t("Attendance", "हाज़िरी")}</p><p class="big">92%</p><p class="mt xs" style="margin-top:4px">${t("11 of 12 classes", "12 में से 11 क्लास")}</p>`)}</div>
+  ${card(continueRow())}
+  ${bigRow("doc", t("Homework due Monday", "होमवर्क सोमवार तक"), t("Kitchen layout drawing", "किचन लेआउट ड्रॉइंग"), pill(t("2 days", "2 दिन"), "warn"))}
+  </div>`;
+};
+
+R.home.list = () => header({ title: NAME(), sub: t("What would you like to do today?", "आज क्या करना है?"), photo: IMG.group }) +
+  `<div class="bd">
+  ${card(`<div class="row sp"><span class="ttl">${t("Week 6 of 16", "हफ़्ता 6 / 16")}</span><span class="mt sm">37%</span></div><div class="bar" style="margin:8px 0 6px"><i style="width:37%"></i></div><p class="mt sm">${t("Month 2 · Compliance and standards", "महीना 2 · नियम और मानक")}</p>`)}
+  ${bigRow("video", t("Class today, 7:00 PM", "आज क्लास, शाम 7:00"), t("Kitchen layout for hospitals", "अस्पताल की किचन का लेआउट"), pill(t("Join", "जुड़ें"), "live"))}
+  ${bigRow("play", t("Continue lesson", "पाठ आगे देखें"), t("HACCP basics · stopped at 12:40", "HACCP · 12:40 पर रुके"))}
+  ${bigRow("doc", t("Homework", "होमवर्क"), t("1 to do · due Monday", "1 बाकी · सोमवार तक"), pill(t("2 days", "2 दिन"), "warn"))}
+  ${bigRow("check", t("Attendance", "हाज़िरी"), t("11 of 12 classes · 92%", "12 में से 11 · 92%"))}
+  ${bigRow("rupee", t("Fees", "फ़ीस"), t("₹25,000 due on 30 Nov", "₹25,000 · 30 नवं तक"))}
+  </div>`;
+
+R.home.tiles = () => {
+  const inHead = C.header === "dark";
+  const nc = `<div class="row sp"><p class="mt sm">${t("Next class · Today 7:00 PM", "अगली क्लास · आज शाम 7:00")}</p><span class="cd">${ic("clock", 14)}${t("2h 15m", "2 घं 15 मि")}</span></div>
+    <p class="ttl" style="font-size:1.1em;margin-top:4px">${t("Kitchen layout for hospitals", "अस्पताल की किचन का लेआउट")}</p>
+    <div class="nc-a" style="margin-bottom:0"><span class="btn btn-sm">${ic("video", 16)}${t("Join class", "क्लास से जुड़ें")}</span><span class="btn btn-sm btn-w">${ic("bell", 16)}${t("Remind me", "याद दिलाएँ")}</span></div>`;
+  return header({ title: NAME(), sub: BATCH(), inner: inHead ? `<div class="nc-in">${nc}</div>` : "" }) +
+  `<div class="bd">${inHead ? "" : `<div class="card dk">${nc}</div>`}
+  <div class="g2">${tile("video", "7:00 PM", t("Today’s class", "आज की क्लास"))}${tile("play", "18/64", t("Lessons done", "पूरे पाठ"))}${tile("doc", "1", t("Homework to do", "होमवर्क बाकी"))}${tile("rupee", "₹25k", t("Fees due 30 Nov", "फ़ीस 30 नवं तक"))}</div>
+  ${helpCard()}</div>`;
+};
+
+function weekDots() {
+  const w = WD();
+  const days = [["16", "ok"], ["17", ""], ["18", "bad"], ["19", ""], ["20", ""], ["21", "today"], ["22", ""]];
+  return `<div class="row sp"><span class="ttl">${t("This week", "इस हफ़्ते")}</span><span class="mt sm">${t("1 of 2 classes joined", "2 में से 1 क्लास")}</span></div>
+  <div class="wk">${days.map(([n, s], i) => `<span class="wd ${s}"><span class="mt xs">${w[i]}</span><b>${s === "ok" ? ic("check", 15) : s === "bad" ? ic("x", 15) : n}</b></span>`).join("")}</div>`;
+}
+function tlItem(time, title, detail, state, right) {
+  const body = `<div class="row sp" style="align-items:flex-start"><div class="grow"><p class="ttl">${title}</p><p class="mt sm">${detail}</p></div>${right || ""}</div>`;
+  const now = state === "now" ? `<div class="nc-a" style="margin-bottom:0"><span class="btn btn-sm">${ic("video", 16)}${t("Join class", "जुड़ें")}</span><span class="btn btn-sm btn-w">${ic("bell", 16)}${t("Remind", "याद दिलाएँ")}</span></div>` : "";
+  return `<div class="tli ${state}"><span class="tlt">${time}</span><span class="tld"></span><div class="${state === "now" ? "card dk" : "card c-" + C.card} tlc">${body}${now}</div></div>`;
+}
+R.home.timeline = () => header({ title: t("Today", "आज"), sub: t("Saturday, 21 November", "शनिवार, 21 नवंबर"), top: NAME() }) +
+  `<div class="bd">${card(weekDots(), "tight")}
+  <div class="tl">
+  ${tlItem("10:00 AM", t("Watch HACCP lesson 3", "HACCP पाठ 3 देखें"), t("Done · 21 min", "पूरा · 21 मिनट"), "done", `<span style="color:var(--ok)">${ic("check", 18)}</span>`)}
+  ${tlItem("4:00 PM", t("Homework: kitchen layout", "होमवर्क: किचन लेआउट"), t("Due Monday", "सोमवार तक"), "", pill(t("2 days", "2 दिन"), "warn"))}
+  ${tlItem("7:00 PM", t("Live class: Kitchen layout for hospitals", "लाइव क्लास: अस्पताल की किचन"), t("Bobby Singh · starts in 2h 15m", "बॉबी सिंह जी · 2 घं 15 मि में"), "now")}
+  ${tlItem("9:00 PM", t("Recording ready", "रिकॉर्डिंग तैयार"), t("Watch it again in Learn", "सीखें में फिर देखें"), "")}
+  </div></div>`;
+
+/* ---------- CLASSES ---------- */
+function classRow(day, wk, time, title, meta, right, extra) {
+  return card(`<div class="row"><div class="dt"><b>${day}</b><span>${wk}</span></div><div class="grow"><p class="ttl">${title}</p><p class="mt sm">${time} · ${meta}</p>${extra || ""}</div>${right || ""}</div>`, "tight");
+}
+const CL_HEAD = () => header({ title: t("My classes", "मेरी क्लास"), sub: t("All times are Indian time (IST)", "सारे समय भारतीय समय में"), photo: IMG.corp });
+
+R.classes.datestrip = () => {
+  const w = WD();
+  const days = [["16", "ok"], ["17", ""], ["18", "bad"], ["19", ""], ["20", ""], ["21", "on"], ["22", ""]];
+  return CL_HEAD() + `<div class="bd">
+  ${card(`<div class="ds">${days.map(([n, s], i) => `<span class="dsd ${s}"><span>${w[i]}</span><b>${n}</b><i></i></span>`).join("")}</div>`, "tight")}
+  <div class="card dk">${nextClass()}</div>
+  <p class="lbl">${t("Coming up", "आने वाली")}</p>
+  ${classRow("23", w[0], "11:00 AM", t("Mentorship with MD Sir", "MD सर के साथ मेंटरशिप"), t("1:1 · 30 min", "1:1 · 30 मिनट"), pill(t("1:1", "1:1"), "mut"))}
+  ${classRow("25", w[2], "6:00 PM", t("Webinar: your first hospital contract", "वेबिनार: पहला अस्पताल कॉन्ट्रैक्ट"), t("60 min", "60 मिनट"))}
+  <p class="lbl">${t("Earlier", "पहले की")}</p>
+  ${classRow("18", w[2], "7:00 PM", t("Workflow and zoning", "वर्कफ़्लो और ज़ोनिंग"), t("Live class", "लाइव क्लास"), pill(t("✗ Missed", "✗ छूटी"), "bad"), `<span class="lnk" style="margin-top:4px">${ic("play", 15)}${t("Watch recording", "रिकॉर्डिंग देखें")}</span>`)}
+  </div>`;
+};
+
+R.classes.agenda = () => {
+  const w = WD().map((x) => x.toUpperCase());
+  const item = (kind, tone, time, title, meta, foot) => card(`<div class="kind">${pill(kind, tone)}<span class="mt sm" style="font-weight:700">${time}</span></div><p class="ttl">${title}</p><p class="mt sm">${meta}</p>${foot || ""}`, "tight");
+  return CL_HEAD() + `<div class="bd">
+  ${segBlock(`<div class="seg"><span class="on">${t("Coming up", "आने वाली")}</span><span>${t("Past", "पिछली")}</span></div>`)}
+  <div class="chips"><span class="chip on">${t("All", "सभी")}</span><span class="chip">${t("Live class", "लाइव")}</span><span class="chip">${t("Mentorship", "मेंटरशिप")}</span><span class="chip">${t("Webinar", "वेबिनार")}</span></div>
+  <div class="ag"><div class="agd on"><b>21</b><span>${t("TODAY", "आज")}</span></div><div class="grow col"><div class="card dk tight"><div class="kind">${pill(t("Live class", "लाइव क्लास"), "live")}<span class="cd">${ic("clock", 14)}7:00 PM</span></div><p class="ttl">${t("Kitchen layout for hospitals", "अस्पताल की किचन का लेआउट")}</p><p class="mt sm">${t("Bobby Singh · 90 min · in 2h 15m", "बॉबी सिंह जी · 90 मिनट")}</p><div class="nc-a" style="margin-bottom:0"><span class="btn btn-sm">${t("Join class", "जुड़ें")}</span><span class="btn btn-sm btn-w">${t("Remind me", "याद दिलाएँ")}</span></div></div></div></div>
+  <div class="ag"><div class="agd"><b>23</b><span>${w[0]}</span></div><div class="grow col">${item(t("Mentorship", "मेंटरशिप"), "mut", "11:00 AM", t("1:1 with MD Sir", "MD सर के साथ 1:1"), t("30 min · Zoom link 10 min before", "30 मिनट · Zoom लिंक 10 मिनट पहले"))}</div></div>
+  <div class="ag"><div class="agd"><b>25</b><span>${w[2]}</span></div><div class="grow col">${item(t("Webinar", "वेबिनार"), "mut", "6:00 PM", t("Your first hospital contract", "पहला अस्पताल कॉन्ट्रैक्ट"), t("60 min · all batches", "60 मिनट · सभी बैच"))}</div></div>
+  </div>`;
+};
+
+R.classes.cards = () => CL_HEAD() + `<div class="bd">
+  <div class="card dk"><div class="kind">${pill(t("Live class", "लाइव क्लास"), "live")}<span class="mt sm" style="font-weight:700">${t("Today · 7:00 PM", "आज · शाम 7:00")}</span></div>
+  <h2>${t("Kitchen layout for hospitals", "अस्पताल की किचन का लेआउट")}</h2><p class="mt sm" style="margin-top:3px">${t("Bobby Singh · 90 min · starts in 2h 15m", "बॉबी सिंह जी · 90 मिनट · 2 घं 15 मि में")}</p>
+  <div class="col" style="margin-top:12px"><span class="btn">${ic("video", 18)}${t("Join class", "क्लास से जुड़ें")}</span><span class="btn btn-w">${ic("cal", 18)}${t("Add to my calendar", "कैलेंडर में जोड़ें")}</span></div></div>
+  ${card(`<div class="kind">${pill(t("Mentorship", "मेंटरशिप"), "mut")}<span class="mt sm" style="font-weight:700">${t("Mon 23 Nov · 11:00 AM", "सोम 23 नवं · 11:00")}</span></div><p class="ttl" style="font-size:1.05em">${t("1:1 with MD Sir", "MD सर के साथ 1:1")}</p><p class="mt sm">${t("30 min · bring your questions", "30 मिनट · अपने सवाल लाएँ")}</p><span class="btn btn-o" style="margin-top:12px">${ic("bell", 18)}${t("Remind me", "याद दिलाएँ")}</span>`)}
+  ${card(`<div class="kind">${pill(t("✗ You missed this", "✗ यह क्लास छूटी"), "bad")}<span class="mt sm" style="font-weight:700">${t("Wed 18 Nov", "बुध 18 नवं")}</span></div><p class="ttl" style="font-size:1.05em">${t("Workflow and zoning", "वर्कफ़्लो और ज़ोनिंग")}</p><span class="btn btn-o" style="margin-top:12px">${ic("play", 18)}${t("Watch recording", "रिकॉर्डिंग देखें")}</span>`)}
+  </div>`;
+
+/* ---------- LEARN ---------- */
+const LN_HEAD = () => header({ title: t("Learn", "सीखें"), sub: t("Watch one lesson at a time", "एक-एक पाठ देखें"), photo: IMG.hosp });
+function courseCover(img, kind, title, meta, pct, done) {
+  return card(`<div class="cv" style="background-image:url(${img})"><span class="pl">${kind}</span></div><div class="pad"><p class="ttl" style="font-size:1.05em">${title}</p><p class="mt sm">${meta}</p><div class="row" style="margin-top:9px;gap:10px"><div class="bar grow"><i style="width:${pct}%"></i></div><span class="sm" style="font-weight:700">${done}</span></div></div>`, "flush");
+}
+R.learn.covers = () => LN_HEAD() + `<div class="bd">
+  ${segBlock(`<div class="seg"><span class="on">${t("Course videos", "कोर्स वीडियो")}</span><span>${t("Class recordings", "क्लास रिकॉर्डिंग")}</span></div>`)}
+  ${courseCover(IMG.group, t("Program", "प्रोग्राम"), t("CGR Mastery Program", "CGR मास्टरी प्रोग्राम"), t("4 months · 64 lessons · Bobby Singh", "4 महीने · 64 पाठ · बॉबी सिंह जी"), 28, t("18 of 64", "64 में 18"))}
+  ${courseCover(IMG.ind, t("Short course", "छोटा कोर्स"), t("Kitchen costing", "किचन कॉस्टिंग"), t("6 lessons", "6 पाठ"), 50, t("3 of 6", "6 में 3"))}
+  </div>`;
+
+function courseRow(img, title, meta, pct) {
+  return card(`<div class="row"><div class="img" style="width:58px;height:58px;background-image:url(${img})"></div><div class="grow"><p class="ttl">${title}</p><p class="mt sm">${meta}</p><div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div></div><span class="mt">${ic("chev", 20)}</span></div>`, "tight");
+}
+R.learn.list = () => LN_HEAD() + `<div class="bd">
+  ${card(continueRow())}
+  <p class="lbl">${t("My courses", "मेरे कोर्स")}</p>
+  ${courseRow(IMG.group, t("CGR Mastery Program", "CGR मास्टरी प्रोग्राम"), t("18 of 64 lessons · 28%", "64 में से 18 · 28%"), 28)}
+  ${courseRow(IMG.ind, t("Kitchen costing", "किचन कॉस्टिंग"), t("3 of 6 lessons · 50%", "6 में से 3 · 50%"), 50)}
+  ${courseRow(IMG.corp, t("HACCP basics", "HACCP की बुनियाद"), t("2 of 8 lessons · 25%", "8 में से 2 · 25%"), 25)}
+  ${courseRow(IMG.hosp, t("Your first hospital contract", "पहला अस्पताल कॉन्ट्रैक्ट"), t("Not started", "शुरू नहीं"), 0)}
+  </div>`;
+
+R.learn.continue = () => LN_HEAD() + `<div class="bd">
+  ${card(`<div class="vid" style="background-image:linear-gradient(rgb(0 0 0/.15),rgb(0 0 0/.35)),url(${IMG.corp})"><span class="play">${ic("tri", 26)}</span><span class="vtime">12:40 / 21:05</span><span class="vbar"><i></i></span></div>
+  <div class="pad"><p class="lbl">${t("HACCP basics · Lesson 3 of 8", "HACCP · पाठ 3 / 8")}</p><p class="ttl" style="font-size:1.08em;margin-top:2px">${t("Critical control points", "क्रिटिकल कंट्रोल पॉइंट")}</p><p class="mt sm">${t("You stopped at 12:40. It starts from there.", "आप 12:40 पर रुके थे। वहीं से चलेगा।")}</p><span class="btn" style="margin-top:12px">${ic("tri", 16)}${t("Resume lesson", "पाठ आगे देखें")}</span></div>`, "flush")}
+  ${card(`<div class="mod"><span class="lsi ok">${ic("check", 15)}</span><div class="grow"><p class="ttl">${t("Month 1 · Kitchen infrastructure", "महीना 1 · किचन इन्फ्रास्ट्रक्चर")}</p><p class="mt sm">${t("16 of 16 done", "16 में से 16 पूरे")}</p></div></div>
+  <div class="mod"><span class="lsi cur">2</span><div class="grow"><p class="ttl">${t("Month 2 · Compliance and standards", "महीना 2 · नियम और मानक")}</p><p class="mt sm">${t("2 of 16 done", "16 में से 2 पूरे")}</p></div></div>
+  <div class="ls"><span class="lsi ok">${ic("check", 13)}</span><span class="grow">${t("What is HACCP", "HACCP क्या है")}</span><span class="mt sm">14 min</span></div>
+  <div class="ls"><span class="lsi cur">${ic("tri", 12)}</span><span class="grow" style="font-weight:700">${t("Critical control points", "क्रिटिकल कंट्रोल पॉइंट")}</span><span class="mt sm">21 min</span></div>
+  <div class="ls"><span class="lsi">${ic("lock", 13)}</span><span class="grow mt">${t("NABH kitchen checklist", "NABH किचन चेकलिस्ट")}</span><span class="mt sm">16 min</span></div>`, "tight")}
+  </div>`;
+
+/* ---------- HOMEWORK ---------- */
+const HW_HEAD = () => header({ title: t("Homework", "होमवर्क"), sub: t("Small tasks after each topic. Your coach gives marks.", "हर टॉपिक के बाद छोटा काम। कोच नंबर देते हैं।"), photo: IMG.inst });
+R.homework.cards = () => HW_HEAD() + `<div class="bd">
+  <div class="card dk"><div class="row sp"><div><p class="mt sm">${t("Your average marks", "आपके औसत नंबर")}</p><p class="big">8.2<span class="mt"> / 10</span></p></div><div style="text-align:right"><p class="mt sm">${t("Done", "पूरे")}</p><p class="big">2<span class="mt"> / 3</span></p></div></div></div>
+  ${card(`<div class="kind">${pill(t("To do", "करना है"), "mut")}${pill(t("Due Mon · 2 days left", "सोमवार तक · 2 दिन"), "warn")}</div><p class="ttl" style="font-size:1.05em">${t("Draw a kitchen layout for a 50-bed hospital", "50 बेड के अस्पताल की किचन बनाएँ")}</p><p class="mt sm">${t("Month 2 · Compliance", "महीना 2 · नियम")}</p><span class="btn" style="margin-top:12px">${ic("upload", 18)}${t("Send answer", "जवाब भेजें")}</span>`)}
+  ${card(`<div class="kind">${pill(t("Sent · waiting for marks", "भेज दिया · नंबर बाकी"), "warn")}</div><p class="ttl">${t("Cost sheet for a corporate canteen", "कॉर्पोरेट कैंटीन की कॉस्ट शीट")}</p>`)}
+  ${card(`<div class="kind">${pill(t("✓ Marks 8 / 10", "✓ नंबर 8 / 10"), "ok")}</div><p class="ttl">${t("NABH kitchen checklist", "NABH किचन चेकलिस्ट")}</p><p class="note">${t("Coach: Good layout. Add hand-wash points near the entry.", "कोच: अच्छा लेआउट। गेट के पास हाथ धोने की जगह जोड़ें।")}</p>`)}
+  </div>`;
+
+R.homework.checklist = () => HW_HEAD() + `<div class="bd">
+  ${card(`<div class="row sp"><span class="ttl">${t("2 of 3 done", "3 में से 2 पूरे")}</span><span class="mt sm">${t("Average 8.2 / 10", "औसत 8.2 / 10")}</span></div><div class="bar" style="margin-top:8px"><i style="width:66%"></i></div>`)}
+  <p class="lbl">${t("To do", "करना है")}</p>
+  ${card(`<div class="row"><span class="cbx"></span><div class="grow"><p class="ttl">${t("Draw a kitchen layout for a 50-bed hospital", "50 बेड के अस्पताल की किचन बनाएँ")}</p><p class="sm" style="color:var(--warn);font-weight:700">${t("Due Mon 23 Nov · 2 days left", "सोम 23 नवं तक · 2 दिन")}</p></div><span class="mt">${ic("chev", 20)}</span></div>`, "tight")}
+  <p class="lbl">${t("Done", "पूरे")}</p>
+  ${card(`<div class="row"><span class="cbx on">${ic("check", 16)}</span><div class="grow"><p class="ttl">${t("Cost sheet for a corporate canteen", "कॉर्पोरेट कैंटीन की कॉस्ट शीट")}</p><p class="mt sm">${t("Sent · waiting for marks", "भेज दिया · नंबर बाकी")}</p></div></div>`, "tight")}
+  ${card(`<div class="row"><span class="cbx on">${ic("check", 16)}</span><div class="grow"><p class="ttl">${t("NABH kitchen checklist", "NABH किचन चेकलिस्ट")}</p><p class="mt sm">${t("Coach: add hand-wash points", "कोच: हाथ धोने की जगह जोड़ें")}</p></div>${pill("8 / 10", "ok")}</div>`, "tight")}
+  </div>`;
+
+R.homework.tabs = () => HW_HEAD() + `<div class="bd">
+  ${segBlock(`<div class="seg"><span class="on">${t("To do", "करना है")} (1)</span><span>${t("Sent", "भेजे")} (1)</span><span>${t("Marked", "नंबर")} (1)</span></div>`)}
+  ${card(`<div class="kind">${pill(t("Due Mon · 2 days left", "सोमवार तक · 2 दिन"), "warn")}</div><h2>${t("Draw a kitchen layout for a 50-bed hospital", "50 बेड के अस्पताल की किचन बनाएँ")}</h2>
+  <ol class="steps sm" style="margin-top:10px"><li>${t("Draw the kitchen on paper.", "काग़ज़ पर किचन बनाएँ।")}</li><li>${t("Mark clean and dirty areas.", "साफ़ और गंदे हिस्से दिखाएँ।")}</li><li>${t("Take one clear photo.", "एक साफ़ फ़ोटो लें।")}</li></ol>
+  <div class="drop" style="margin-top:12px">${ic("upload", 22)}<span>${t("Add photo or PDF", "फ़ोटो या PDF जोड़ें")}</span></div>
+  <span class="btn" style="margin-top:12px">${t("Send answer", "जवाब भेजें")}</span>`)}
+  </div>`;
+
+/* ---------- MORE ---------- */
+const lr = (icon, title, detail, right) => `<div class="lr"><span class="icb s">${ic(icon, 18)}</span><div class="grow"><p class="ttl">${title}</p>${detail ? `<p class="mt sm">${detail}</p>` : ""}</div>${right || `<span class="mt">${ic("chev", 18)}</span>`}</div>`;
+const ME = () => `<div class="row"><span class="av">RS</span><div class="grow"><p class="ttl" style="font-size:1.05em">Rajesh Sharma</p><p class="mt sm">${t("CGR Batch 7 · +91 98765 43210", "CGR बैच 7 · +91 98765 43210")}</p></div></div>`;
+const MORE_HEAD = (inner) => header({ title: t("More", "और"), inner, photo: IMG.ind });
+const langRow = () => lr("globe", t("Language", "भाषा"), "", `<span class="mseg"><span class="${C.hi ? "" : "on"}">EN</span><span class="${C.hi ? "on" : ""}">हिंदी</span></span>`);
+const sizeRow = () => lr("text", t("Text size", "अक्षर का आकार"), "", `<span class="mseg"><span>A</span><span class="on">A+</span><span>A++</span></span>`);
+
+R.more.list = () => MORE_HEAD() + `<div class="bd">
+  ${card(ME(), "tight")}
+  ${card(lr("qa", t("Ask a question", "सवाल पूछें"), t("MD Sir and coaches answer you", "MD सर और कोच जवाब देंगे")) + lr("check", t("My attendance", "मेरी हाज़िरी"), t("11 of 12 classes · 92%", "12 में से 11 · 92%")) + lr("rupee", t("Fees", "फ़ीस"), t("Payments and GST bills", "पेमेंट और GST बिल"), pill(t("₹25,000 due", "₹25,000 बाकी"), "warn")) + lr("award", t("Certificate", "सर्टिफ़िकेट"), t("3 of 5 steps done", "5 में से 3 पूरे")), "grp")}
+  ${card(langRow() + sizeRow() + lr("bell", t("WhatsApp reminders", "WhatsApp रिमाइंडर"), t("1 day and 15 min before", "1 दिन और 15 मिनट पहले"), `<span class="tg"></span>`), "grp")}
+  <span class="btn btn-o">${ic("out", 18)}${t("Sign out", "लॉग आउट")}</span>
+  </div>`;
+
+R.more.grid = () => MORE_HEAD() + `<div class="bd">
+  ${card(ME(), "tight")}
+  <div class="g2">
+  ${card(`<span class="icb">${ic("qa", 20)}</span><p class="ttl" style="margin-top:10px">${t("Ask a question", "सवाल पूछें")}</p><p class="mt sm">${t("2 answered", "2 के जवाब आए")}</p>`)}
+  ${card(`<span class="icb">${ic("check", 20)}</span><p class="ttl" style="margin-top:10px">${t("Attendance", "हाज़िरी")}</p><p class="mt sm">92%</p>`)}
+  ${card(`<span class="icb">${ic("rupee", 20)}</span><p class="ttl" style="margin-top:10px">${t("Fees", "फ़ीस")}</p><p class="sm" style="color:var(--warn);font-weight:700">${t("₹25,000 due", "₹25,000 बाकी")}</p>`)}
+  ${card(`<span class="icb">${ic("award", 20)}</span><p class="ttl" style="margin-top:10px">${t("Certificate", "सर्टिफ़िकेट")}</p><p class="mt sm">${t("3 of 5 steps", "5 में से 3")}</p>`)}
+  ${card(`<span class="icb">${ic("globe", 20)}</span><p class="ttl" style="margin-top:10px">${t("Language", "भाषा")}</p><p class="mt sm">${t("English", "हिंदी")}</p>`)}
+  ${card(`<span class="icb">${ic("gear", 20)}</span><p class="ttl" style="margin-top:10px">${t("Settings", "सेटिंग")}</p><p class="mt sm">${t("Reminders, text size", "रिमाइंडर, अक्षर")}</p>`)}
+  </div>${helpCard()}</div>`;
+
+R.more.profile = () => {
+  const inHead = C.header === "dark";
+  const prof = `<div class="row"><span class="av lg">RS</span><div class="grow"><p class="ttl" style="font-size:1.1em">Rajesh Sharma</p><p class="mt sm">${t("CGR Batch 7 · Week 6 of 16", "CGR बैच 7 · हफ़्ता 6 / 16")}</p></div></div>
+    <div class="stats"><div class="stat"><b>92%</b><span>${t("Attendance", "हाज़िरी")}</span></div><div class="stat"><b>18</b><span>${t("Lessons", "पाठ")}</span></div><div class="stat"><b>8.2</b><span>${t("Marks", "नंबर")}</span></div></div>`;
+  return MORE_HEAD(inHead ? `<div style="margin-top:16px">${prof}</div>` : "") + `<div class="bd">
+  ${inHead ? "" : `<div class="card dk">${prof}</div>`}
+  ${card(lr("qa", t("Ask a question", "सवाल पूछें"), t("MD Sir and coaches answer you", "MD सर और कोच जवाब देंगे")) + lr("rupee", t("Fees", "फ़ीस"), t("Payments and GST bills", "पेमेंट और GST बिल"), pill(t("₹25,000 due", "₹25,000 बाकी"), "warn")) + lr("award", t("Certificate", "सर्टिफ़िकेट"), t("3 of 5 steps done", "5 में से 3 पूरे")) + langRow(), "grp")}
+  ${helpCard()}</div>`;
+};
+
+/* ---------- CERTIFICATE ---------- */
+const CERT_HEAD = () => header({ title: t("My certificate", "मेरा सर्टिफ़िकेट"), sub: t("CGR Mastery Program", "CGR मास्टरी प्रोग्राम"), top: `<span class="back">${ic("back", 16)}${t("More", "और")}</span>`, photo: IMG.group });
+const STEPS = () => [
+  ["ok", t("Name on certificate", "सर्टिफ़िकेट पर नाम"), t("Rajesh Sharma · checked", "Rajesh Sharma · जाँचा गया")],
+  ["ok", t("Attendance 75% or more", "75% या ज़्यादा हाज़िरी"), t("You have 92%", "आपकी 92% है")],
+  ["ok", t("Month 1 test", "महीना 1 टेस्ट"), t("Passed · 8 / 10", "पास · 8 / 10")],
+  ["cur", t("Watch all lessons", "सारे पाठ देखें"), t("18 of 64 done", "64 में से 18 पूरे"), 28],
+  ["lock", t("Final project and test", "फ़ाइनल प्रोजेक्ट और टेस्ट"), t("Opens in March 2027", "मार्च 2027 में खुलेगा")],
+];
+function stepIcon(s, i) {
+  return s === "ok" ? `<span class="lsi ok">${ic("check", 14)}</span>` : s === "cur" ? `<span class="lsi cur">${i + 1}</span>` : `<span class="lsi">${ic("lock", 13)}</span>`;
+}
+function stepRow([s, title, detail, pct], i) {
+  return `<div class="lr">${stepIcon(s, i)}<div class="grow"><p class="ttl ${s === "lock" ? "mt" : ""}">${title}</p><p class="mt sm">${detail}</p>${pct != null ? `<div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div>` : ""}</div></div>`;
+}
+function certPaper(locked) {
+  return `<div class="cert"><div class="cert-in"><img src="${IMG.mark}" alt="" class="cert-mk"><p class="cert-k">${t("Certificate of completion", "पूर्णता प्रमाणपत्र")}</p>
+  <p class="cert-n">Rajesh Sharma</p><p class="cert-p">${t("has completed the CGR Mastery Program", "ने CGR मास्टरी प्रोग्राम पूरा किया")}</p>
+  <div class="cert-f"><span><b>Bobby Singh</b><br>${t("MD, Red Bean Hospitality", "MD, रेड बीन हॉस्पिटैलिटी")}</span><span class="qr"></span></div></div>
+  ${locked ? `<div class="cert-lock"><span class="pl">${ic("lock", 13)}${t("2 steps left", "2 चरण बाकी")}</span></div>` : ""}</div>`;
+}
+const certButtons = () => `<div class="g2"><span class="btn btn-o btn-off">${ic("download", 17)}${t("Download PDF", "PDF डाउनलोड")}</span><span class="btn btn-o btn-off">${ic("share", 17)}${t("Share", "शेयर करें")}</span></div>`;
+
+R.certificate.steps = () => CERT_HEAD() + `<div class="bd">
+  <div class="card dk"><div class="row sp"><div><p class="mt sm">${t("Your progress", "आपकी प्रगति")}</p><p class="big">3<span class="mt"> / 5 ${t("steps", "चरण")}</span></p></div><span class="play" style="background:rgb(255 255 255/.14);color:inherit">${ic("award", 22)}</span></div>
+  <div class="bar" style="margin-top:10px"><i style="width:60%"></i></div><p class="mt xs" style="margin-top:8px">${t("2 more steps and your certificate is ready.", "2 चरण और, फिर सर्टिफ़िकेट तैयार।")}</p></div>
+  ${card(STEPS().map(stepRow).join(""), "grp")}
+  ${card(`<div class="row"><div class="cert-mini">${certPaper(true)}</div><div class="grow"><p class="ttl">${t("Your certificate", "आपका सर्टिफ़िकेट")}</p><p class="mt sm">${t("PDF with a QR code anyone can check", "QR कोड वाला PDF, कोई भी जाँच सकता है")}</p></div></div>`, "tight")}
+  </div>`;
+
+R.certificate.preview = () => CERT_HEAD() + `<div class="bd">
+  ${certPaper(true)}
+  ${certButtons()}
+  <p class="mt xs ctr">${t("Unlocks after the final test. We also send it on WhatsApp.", "फ़ाइनल टेस्ट के बाद खुलेगा। WhatsApp पर भी भेजेंगे।")}</p>
+  ${card(`<div class="row sp"><span class="ttl">${t("3 of 5 steps done", "5 में से 3 चरण पूरे")}</span><span class="mt sm">60%</span></div><div class="bar" style="margin:8px 0 4px"><i style="width:60%"></i></div>` + STEPS().slice(3).map((s, i) => stepRow(s, i + 3)).join(""), "tight")}
+  </div>`;
+
+R.certificate.path = () => CERT_HEAD() + `<div class="bd">
+  ${card(`<div class="row sp"><span class="ttl">${t("3 of 5 steps done", "5 में से 3 चरण पूरे")}</span>${pill(t("2 left", "2 बाकी"), "warn")}</div>`, "tight")}
+  <div class="tl">${STEPS().map(([s, title, detail, pct], i) => `<div class="tli ${s === "ok" ? "done" : s === "cur" ? "now" : ""}"><span class="tlt">${t("Step", "चरण")} ${i + 1}</span><span class="tld"></span>
+    <div class="card ${s === "cur" ? "dk" : "c-" + C.card} tlc"><p class="ttl">${title}</p><p class="mt sm">${detail}</p>${pct != null ? `<div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div><span class="btn btn-sm" style="margin-top:10px">${ic("tri", 14)}${t("Continue lessons", "पाठ आगे देखें")}</span>` : ""}</div></div>`).join("")}
+  <div class="tli"><span class="tlt">${ic("award", 20)}</span><span class="tld"></span><div class="card c-${C.card} tlc"><p class="ttl">${t("Certificate with QR code", "QR कोड वाला सर्टिफ़िकेट")}</p><p class="mt sm">${t("PDF here and on WhatsApp", "यहाँ और WhatsApp पर PDF")}</p></div></div>
+  </div></div>`;
+
+/* ---------- LOGIN ---------- */
+function loginForm(level) {
+  const head = level === "h1"
+    ? `<div><h1>${t("Welcome back", "स्वागत है")}</h1><p class="mt" style="margin-top:6px">${t("Sign in with your WhatsApp number or email.", "अपने WhatsApp नंबर या ईमेल से लॉगिन करें।")}</p></div>`
+    : `<div><h2 style="font-size:1.3em">${t("Sign in", "लॉगिन करें")}</h2><p class="mt sm" style="margin-top:4px">${t("Use your WhatsApp number or email.", "WhatsApp नंबर या ईमेल डालें।")}</p></div>`;
+  return `${head}
+  <div class="fl"><span class="fll">${t("WhatsApp number or email", "WhatsApp नंबर या ईमेल")}</span><span class="inp"><b>+91</b><span>98765 43210</span></span></div>
+  <span class="btn">${ic("chat", 18)}${t("Get code on WhatsApp", "WhatsApp पर कोड पाएँ")}</span>
+  <p class="mt sm ctr" style="display:flex;gap:6px;justify-content:center;align-items:center">${ic("lock", 14)}${t("No password. We send a 6-digit code.", "पासवर्ड नहीं। 6 अंकों का कोड आएगा।")}</p>`;
+}
+const mark = (cls = "") => `<span class="mk ${cls}"><img src="${IMG.mark}" alt=""></span>`;
+
+R.login.split = () => ({ light: true, html: `<div class="ls-top"><div class="hd-top"><span></span>${lang(true)}</div>
+  <div class="orb">${[IMG.hosp, IMG.corp, IMG.ind, IMG.inst].map((p, i) => `<span class="ob ob${i}" style="background-image:url(${p})"></span>`).join("")}${mark()}</div>
+  <p class="wm">Redbean Academy</p><p class="ls-tag">${t("Food contract business training with Bobby Singh", "बॉबी सिंह जी के साथ फ़ूड कॉन्ट्रैक्ट ट्रेनिंग")}</p></div>
+  <div class="ls-form form">${loginForm("h1")}<p class="ctr sm">${t("New student?", "नए छात्र?")} <b class="acc">${t("Apply for CGR", "CGR के लिए अप्लाई करें")}</b></p></div>` });
+
+R.login.minimal = () => ({ light: !!C.dark, html: `<div class="lm"><div class="hd-top"><span class="row" style="gap:9px">${mark("mk-sm")}<b>Redbean Academy</b></span>${lang(false)}</div>
+  <div class="form" style="margin-top:40px">${loginForm("h1")}<div class="or"><span>${t("or", "या")}</span></div><span class="btn btn-o">${ic("mail", 18)}${t("Get code on email", "ईमेल पर कोड पाएँ")}</span></div>
+  <div class="lm-help">${card(`<div class="row"><span class="icb">${ic("phone", 20)}</span><div class="grow"><p class="ttl">${t("Trouble signing in?", "लॉगिन में दिक्कत?")}</p><p class="mt sm">${t("Call or WhatsApp the Redbean team", "रेडबीन टीम को कॉल या WhatsApp करें")}</p></div></div>`, "tight")}</div></div>` });
+
+R.login.curve = () => ({ light: true, html: `<div class="lc-top"><div class="hd-top"><span></span>${lang(true)}</div>${mark("mk-md")}
+  <h1>${t("Namaste!", "नमस्ते!")}</h1><p class="lc-sub">${t("Learn to win food contracts with Bobby Singh", "बॉबी सिंह जी के साथ फ़ूड कॉन्ट्रैक्ट जीतना सीखें")}</p></div>
+  <div class="card c-shadow lc-card form">${loginForm("h2")}</div>
+  <div class="lc-foot"><span class="help">${ic("phone", 15)}${t("Call us", "कॉल करें")}</span><span class="help">${ic("chat", 15)}WhatsApp</span></div>` });
+
+R.login.photo = () => ({ light: true, html: `<div class="lp" style="background-image:linear-gradient(180deg,rgb(8 6 8/.6),rgb(8 6 8/.1) 38%,rgb(8 6 8/.78)),url(${IMG.group})">
+  <div class="hd-top"><span class="row" style="gap:9px;color:#fff">${mark("mk-sm")}<b>Redbean Academy</b></span>${lang(true)}</div>
+  <div><p class="lp-k">${t("20+ years · 350+ success stories", "20+ साल · 350+ सफल कहानियाँ")}</p><h1>${t("Win your first food contract", "अपना पहला फ़ूड कॉन्ट्रैक्ट जीतें")}</h1></div></div>
+  <div class="lp-sheet form">${loginForm("h2")}</div>` });
+
+R.login.card = () => ({ light: !!C.dark, html: `<div class="lk"><div class="hd-top"><span class="back">${ic("back", 18)}${t("Back", "वापस")}</span>${lang(false)}</div>
+  <div class="card c-${C.card === "flat" ? "shadow" : C.card} lk-card">${mark("mk-md")}<h1 style="font-size:1.5em">${t("Enter your code", "अपना कोड डालें")}</h1>
+  <p class="mt">${t("We sent a 6-digit code on WhatsApp to +91 98765 43210.", "WhatsApp पर +91 98765 43210 को 6 अंकों का कोड भेजा है।")}</p>
+  <div class="otp"><span>1</span><span>2</span><span>3</span><span>4</span><span class="f"></span><span></span></div>
+  <p class="mt sm">${t("Resend code in 0:24", "0:24 में दोबारा भेजें")}</p>
+  <span class="btn">${t("Verify and sign in", "जाँचें और लॉगिन करें")}</span>
+  <p class="sm"><b class="acc">${t("Change number", "नंबर बदलें")}</b></p></div>
+  <p class="ctr mt sm">${t("Step 2 of 2 · code step", "चरण 2 / 2 · कोड")}</p></div>` });
+
+/* ---------- phone ---------- */
+function tabbar(active) {
+  const items = [["home", "home", t("Home", "होम")], ["classes", "video", t("Classes", "क्लास")], ["learn", "play", t("Learn", "सीखें")], ["homework", "doc", t("Homework", "होमवर्क")], ["more", "menu", t("More", "और")]];
+  return `<div class="tb tb-${C.ns}">${items.map(([id, icn, l]) => `<span class="ti ${id === active ? "on" : ""}"><span class="ip">${ic(icn, 22)}</span><span>${l}</span></span>`).join("")}</div>`;
+}
+function vars(d) {
+  const s = d.dark ? DARK_SEM : LIGHT_SEM;
+  const v = { bg: d.bg, surface: d.surface, fg: d.fg, muted: d.muted, line: d.line, accent: d.accent, accent2: d.accent2, accentFg: d.accentFg, tint: d.tint,
+    hero: d.hero, heroFg: d.heroFg, heroMuted: d.heroMuted, navBg: d.navBg, navFg: d.navFg, navOn: d.navOn, pill: d.pill, accentLine: d.accentLine || "transparent", ...s };
+  return Object.entries(v).map(([k, x]) => `--${k}:${x}`).join(";") + `;--font:${d.font};--head:${d.head || d.font};--fs:${d.fs || 1};--r:${d.r}px;--bw:${d.bw || 1}px`;
+}
+function phone(d, s) {
+  C = d;
+  const out = R[s][d[KEY[s]]]();
+  const html = typeof out === "string" ? out : out.html;
+  const light = typeof out === "string" ? (["dark", "curve", "photo"].includes(d.header) || !!d.dark) : out.light;
+  return `<div class="dev" role="img" aria-label="${d.name}, ${s} screen"><div class="ph ${d.dark ? "is-dark" : ""}" style="${vars(d)}">
+    <div class="sb ${light ? "sb-l" : ""}"><span>9:41</span><span class="sb-r"><i class="sg"></i><i class="bt"></i></span></div>
+    <div class="scr">${html}</div>${s === "login" ? "" : tabbar(s === "certificate" ? "more" : s)}</div></div>`;
+}
+
+/* ---------- page state ---------- */
+const STORE = "rb_app_looks_v1";
+const state = { view: "design", look: 1, screen: "home", all: null, per: {} };
+try {
+  const saved = JSON.parse(localStorage.getItem(STORE) || "null");
+  if (saved) Object.assign(state, { look: saved.look || 1, screen: saved.screen || "home", all: saved.all ?? null, per: saved.per || {}, view: saved.view || "design" });
+} catch (e) {}
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+const $ = (id) => document.getElementById(id);
+const lookById = (id) => LOOKS.find((l) => l.id === id);
+const swatch = (l) => `background:linear-gradient(135deg,${l.hero} 0 48%,${l.accent} 48% 100%)`;
+
+function renderLooks() {
+  $("looks").innerHTML = LOOKS.map((l) => `<button type="button" class="lk-btn" role="radio" aria-checked="${l.id === state.look}" data-look="${l.id}">
+    <span class="sw" style="${swatch(l)}"></span><span class="lk-txt"><span class="lk-n">Look ${l.id}${state.all === l.id ? ` <span class="tick">✓ picked</span>` : ""}</span><span class="lk-name">${l.name}</span></span></button>`).join("");
+  const l = lookById(state.look);
+  const picked = state.all === l.id;
+  $("look-head").innerHTML = `<div style="min-width:0;flex:1 1 380px"><h2>Look ${l.id} · ${l.name}</h2><p>${l.tag}</p>
+    <div class="facts"><span class="fact">Font <b>${l.fontName}</b></span><span class="fact">Top <b>${FACT.header[l.header]}</b></span><span class="fact">Menu <b>${FACT.ns[l.ns]}</b></span><span class="fact">Cards <b>${FACT.card[l.card]}</b></span>${l.hi ? `<span class="fact"><b>Hindi first</b></span>` : ""}${l.dark ? `<span class="fact"><b>Dark mode</b></span>` : ""}</div></div>
+    <button type="button" class="pick" data-pick-all="${l.id}" aria-pressed="${picked}">${picked ? "✓ Picked for the whole app" : "Use this look for the whole app"}</button>`;
+  $("g-design").innerHTML = SCREENS.map((s) => `<div class="cell"><div class="cap"><span class="cap-t"><b>${s.name}</b></span></div><div class="slot">${phone(l, s.id)}</div></div>`).join("");
+}
+
+function renderScreens() {
+  $("screens").innerHTML = SCREENS.map((s) => `<button type="button" role="tab" aria-selected="${s.id === state.screen}" data-screen="${s.id}">${s.name}</button>`).join("");
+  const sc = SCREENS.find((s) => s.id === state.screen);
+  $("improve").innerHTML = `<h2>What is better on ${sc.name}, in every look</h2><ul>${IMPROVE[sc.id].map((x) => `<li>${x}</li>`).join("")}</ul>`;
+  $("g-screen").innerHTML = LOOKS.map((l) => {
+    const on = state.per[sc.id] === l.id;
+    return `<div class="cell"><div class="cap"><span class="cap-t"><b>Look ${l.id}</b><span>${l.name}</span></span><button type="button" class="use" data-pick-screen="${l.id}" aria-pressed="${on}" aria-label="Use Look ${l.id} for ${sc.name}">${on ? "✓ Chosen" : "Choose"}</button></div><div class="slot">${phone(l, sc.id)}</div></div>`;
+  }).join("");
+}
+
+function summary() {
+  const parts = [];
+  if (state.all) parts.push(`Whole app: Look ${state.all} (${lookById(state.all).name})`);
+  SCREENS.forEach((s) => { const id = state.per[s.id]; if (id && id !== state.all) parts.push(`${s.name}: Look ${id} (${lookById(id).name})`); });
+  return parts;
+}
+function renderChoice() {
+  const p = summary();
+  $("ch-sum").textContent = p.length ? p.join(" · ") : "Nothing picked yet. Choose a look, or pick per screen.";
+  $("ch-copy").disabled = !p.length;
+  $("ch-copy").style.opacity = p.length ? "1" : ".5";
+}
+
+function render() {
+  const d = state.view === "design";
+  $("by-design").hidden = !d; $("by-screen").hidden = d;
+  $("v-design").setAttribute("aria-selected", d); $("v-screen").setAttribute("aria-selected", !d);
+  if (d) renderLooks(); else renderScreens();
+  renderChoice();
+  fit();
+}
+
+/* Scale phones to the grid column width. */
+function fit() {
+  document.querySelectorAll(".grid").forEach((g) => {
+    if (g.offsetParent === null) return;
+    const cols = parseInt(getComputedStyle(g).getPropertyValue("--cols")) || 1;
+    const gap = parseFloat(getComputedStyle(g).columnGap) || 20;
+    const w = (g.clientWidth - gap * (cols - 1)) / cols;
+    g.style.setProperty("--s", Math.min(1, w / 360).toFixed(4));
+  });
+}
+if (window.ResizeObserver) new ResizeObserver(fit).observe(document.querySelector(".wrap"));
+window.addEventListener("resize", fit);
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.id === "v-design" || b.id === "v-screen") { state.view = b.id === "v-design" ? "design" : "screen"; }
+  else if (b.dataset.look) { state.look = +b.dataset.look; }
+  else if (b.dataset.screen) { state.screen = b.dataset.screen; }
+  else if (b.dataset.pickAll) { const id = +b.dataset.pickAll; state.all = state.all === id ? null : id; }
+  else if (b.dataset.pickScreen) { const id = +b.dataset.pickScreen; state.per[state.screen] = state.per[state.screen] === id ? undefined : id; }
+  else if (b.id === "ch-clear") { state.all = null; state.per = {}; $("ch-fallback").hidden = true; }
+  else if (b.id === "ch-copy") {
+    const txt = "Redbean mobile design choice. " + summary().join(". ") + ".";
+    const fb = () => { const ta = $("ch-fallback"); ta.value = txt; ta.hidden = false; ta.focus(); ta.select(); };
+    try {
+      navigator.clipboard.writeText(txt).then(() => { b.textContent = "Copied"; setTimeout(() => (b.textContent = "Copy choice"), 1600); }, fb);
+    } catch (err) { fb(); }
+    return;
+  } else return;
+  save(); render();
+});
+
+render();
+</script>

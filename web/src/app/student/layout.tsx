@@ -6,7 +6,7 @@ import { AdminSwitch, UserChip, UserChipSkeleton } from "@/components/portal/use
 import { getLang, getTextSize } from "@/lib/i18n/server";
 import { textSizeClass } from "@/lib/i18n/dict";
 import { cn } from "@/lib/utils";
-import { AccentPicker } from "@/components/theme/accent-picker";
+import { StudentAccentPicker } from "@/components/theme/student-accent-picker";
 
 export const metadata: Metadata = { title: { default: "Student portal", template: "%s · Redbean Academy" }, robots: { index: false } };
 
@@ -34,18 +34,12 @@ async function StudentShell({ children }: { children: React.ReactNode }) {
     <LangProvider lang={lang}>
       <div lang={lang === "hi" ? "hi" : "en-IN"} className={cn("portal-easy rb-themed min-h-dvh bg-bg lg:grid lg:grid-cols-[280px_minmax(0,1fr)]", textSizeClass[size])}>
         <Sidebar user={chip(false, true)} extra={<Suspense><AdminSwitch /></Suspense>} />
-        <div className="min-w-0">
+        <div className="rb-canvas min-w-0">
           <Topbar
             user={chip(true)}
             userWide={chip()}
-            extra={
-              <>
-                <AccentPicker lang={lang} size="lg" />
-                <Suspense>
-                  <AdminSwitch compact />
-                </Suspense>
-              </>
-            }
+            extra={<Suspense><AdminSwitch compact /></Suspense>}
+            tools={<StudentAccentPicker />}
           />
           <main className="mx-auto max-w-6xl px-4 pb-40 pt-6 sm:px-8 lg:pb-16 lg:pt-10">{children}</main>
         </div>

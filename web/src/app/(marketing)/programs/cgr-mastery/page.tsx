@@ -6,6 +6,7 @@ import { Curriculum, Pillars, SectionLabel } from "@/components/marketing/sectio
 import { Benefits } from "@/components/marketing/sections-academy";
 import { ApplySection, Faq } from "@/components/marketing/sections-close";
 import { AwardsStrip, SectorsGallery } from "@/components/marketing/photo-sections";
+import { CourseIncludes } from "@/components/marketing/course-includes";
 
 export const metadata: Metadata = {
   title: "CGR Food Contract Mastery Program",
@@ -56,6 +57,8 @@ export default function ProgramPage() {
           </Stagger>
         </div>
       </section>
+
+      <CourseIncludes />
 
       <SectorsGallery />
 

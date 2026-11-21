@@ -6,6 +6,8 @@ import { AlertTriangle, CalendarPlus, CheckCircle2, CircleDot, Loader2, PlayCirc
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { createSession, getHostLink, setSessionRecording } from "@/lib/actions/admin";
+import { deleteSession, updateSession } from "@/lib/actions/admin-crud";
+import { ConfirmDelete, DateTimeInput, FormError, FormFooter, Modal, NumberInput, RowActions, Select, TextInput, istLocalToIso, isoToIstLocal, useAdminAction } from "./crud";
 import { getJoinState } from "@/lib/join-window";
 import type { BatchSummary, ClassSession, RecordingStatus, SessionType } from "@/lib/types";
 import { cn, durationLabel, fmtDayLong, fmtTime, istDayKey, secondsLabel } from "@/lib/utils";
@@ -48,6 +50,9 @@ export function SessionsView({ initial, batches, serverNow, openNew }: { initial
   const [sessions, setSessions] = useState(initial);
   const [when, setWhen] = useState<When>("upcoming");
   const [dialog, setDialog] = useState(openNew);
+  const [editing, setEditing] = useState<ClassSession | null>(null);
+  const [removing, setRemoving] = useState<ClassSession | null>(null);
+  const del = useAdminAction();
   const [, start] = useTransition();
 
   const list = sessions.filter((s) => (when === "upcoming" ? +new Date(s.endsAt) > ref : +new Date(s.endsAt) <= ref));
@@ -154,6 +159,7 @@ export function SessionsView({ initial, batches, serverNow, openNew }: { initial
                           <PlayCircle /> {js.live ? "Rejoin as host" : "Start"}
                         </Button>
                       )}
+                      {upcoming && <RowActions onEdit={() => setEditing(s)} onDelete={() => setRemoving(s)} deleteLabel="Cancel class" />}
                     </motion.li>
                   );
                 })}
@@ -170,6 +176,35 @@ export function SessionsView({ initial, batches, serverNow, openNew }: { initial
         onCreated={(s) => {
           setSessions((cur) => [...cur, s].sort((a, b) => +new Date(a.startsAt) - +new Date(b.startsAt)));
           setWhen("upcoming");
+        }}
+      />
+      <EditSessionDialog
+        key={editing?.id ?? "none"}
+        session={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(id, patch) => {
+          setSessions((cur) => cur.map((x) => (x.id === id ? { ...x, ...patch } : x)).sort((a, b) => +new Date(a.startsAt) - +new Date(b.startsAt)));
+          setEditing(null);
+        }}
+      />
+      <ConfirmDelete
+        open={!!removing}
+        onClose={() => setRemoving(null)}
+        pending={del.pending}
+        error={del.error}
+        title="Cancel this class?"
+        confirmLabel="Cancel class"
+        body={
+          <>
+            <b>{removing?.title}</b> is removed from every student’s schedule and the Zoom meeting is deleted. Students who registered get a cancellation message.
+          </>
+        }
+        onConfirm={() => {
+          const s = removing!;
+          del.run(() => deleteSession(s.id), "Class cancelled", () => {
+            setSessions((cur) => cur.filter((x) => x.id !== s.id));
+            setRemoving(null);
+          });
         }}
       />
     </Page>
@@ -218,7 +253,8 @@ function NewSessionDialog({ open, onClose, batches, onCreated }: { open: boolean
                 e.preventDefault();
                 submit();
               }}
-              className="pointer-events-auto w-full max-w-lg rounded-[28px] bg-surface p-6 shadow-2xl sm:p-8"
+              data-lenis-prevent
+              className="pointer-events-auto max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-[28px] bg-surface p-6 shadow-2xl sm:p-8"
             >
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-2xl font-semibold text-fg">New class</h2>
@@ -233,7 +269,7 @@ function NewSessionDialog({ open, onClose, batches, onCreated }: { open: boolean
                 </label>
                 <div>
                   <span className="text-sm text-fg-muted">Type</span>
-                  <div className="mt-1.5 grid grid-cols-3 gap-2">
+                  <div className="mt-1.5 grid grid-cols-1 gap-2 sm:grid-cols-3">
                     {(Object.keys(typeMeta) as SessionType[]).map((t) => (
                       <button
                         key={t}
@@ -261,8 +297,8 @@ function NewSessionDialog({ open, onClose, batches, onCreated }: { open: boolean
                     ))}
                   </select>
                 </label>
-                <div className="grid grid-cols-3 gap-3">
-                  <label className="col-span-3 block text-sm sm:col-span-1">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  <label className="col-span-2 block text-sm sm:col-span-1">
                     <span className="text-fg-muted">Date</span>
                     <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className={`${input} mt-1.5`} />
                   </label>
@@ -299,5 +335,40 @@ function NewSessionDialog({ open, onClose, batches, onCreated }: { open: boolean
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+function EditSessionDialog({ session, onClose, onSaved }: { session: ClassSession | null; onClose: () => void; onSaved: (id: number, patch: Partial<ClassSession>) => void }) {
+  const [f, setF] = useState(() => ({
+    title: session?.title ?? "",
+    type: session?.type ?? ("live" as SessionType),
+    start: session ? isoToIstLocal(session.startsAt) : "",
+    duration: session ? Math.round((+new Date(session.endsAt) - +new Date(session.startsAt)) / 60_000) : 90,
+  }));
+  const act = useAdminAction();
+  const save = () => {
+    if (!session) return;
+    act.run(() => updateSession(session.id, { title: f.title, type: f.type, startsAt: istLocalToIso(f.start), durationMin: f.duration }), "Class updated", (r) => onSaved(session.id, r.data));
+  };
+  return (
+    <Modal open={!!session} onClose={onClose} title="Edit class" sub={session ? session.batchName : undefined} footer={<FormFooter onCancel={onClose} onSave={save} pending={act.pending} saveLabel="Save changes" />}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TextInput label="Title" value={f.title} onChange={(v) => setF((x) => ({ ...x, title: v }))} className="sm:col-span-2" />
+        <Select
+          label="Type"
+          value={f.type}
+          onChange={(v) => setF((x) => ({ ...x, type: v }))}
+          options={[
+            { value: "live" as SessionType, label: "Live class" },
+            { value: "webinar" as SessionType, label: "Webinar" },
+            { value: "mentorship" as SessionType, label: "Mentorship" },
+          ]}
+        />
+        <NumberInput label="Duration" hint="minutes" value={f.duration} onChange={(v) => setF((x) => ({ ...x, duration: v }))} min={15} max={480} step={15} />
+        <DateTimeInput label="Starts at" value={f.start} onChange={(v) => setF((x) => ({ ...x, start: v }))} className="sm:col-span-2" />
+      </div>
+      <p className="mt-3 text-xs text-fg-muted">The Zoom meeting time is updated too. Students see the new time in their schedule and reminders.</p>
+      <FormError error={act.error} />
+    </Modal>
   );
 }

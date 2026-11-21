@@ -16,15 +16,15 @@ export async function UserChip({ compact = false, dark = false, href }: { compac
       </span>
       {!compact && (
         <span className="min-w-0 text-sm leading-tight">
-          <span className={cn("flex items-center gap-1.5 truncate font-medium", dark ? "text-white" : "text-fg")}>
+          <span className={cn("flex items-center gap-1.5 truncate font-medium", dark ? "text-[var(--nav-fg)]" : "text-fg")}>
             <span className="truncate">{user.name}</span>
             {user.role !== "student" && (
-              <span className={cn("shrink-0 rounded px-1 py-px text-[9px] font-semibold", dark ? "bg-bean-600/30 text-bean-200" : "bg-bean-50 text-bean-700")}>
+              <span className={cn("shrink-0 rounded px-1 py-px text-[9px] font-semibold", dark ? "bg-bean-600 text-white" : "bg-bean-50 text-bean-700")}>
                 {roleLabel[user.role]}
               </span>
             )}
           </span>
-          <span className={cn("block truncate text-xs", dark ? "text-white/45" : "text-fg-muted")}>{user.email ?? user.phone}</span>
+          <span className={cn("block truncate text-xs", dark ? "text-[var(--nav-faint)]" : "text-fg-muted")}>{user.email ?? user.phone}</span>
         </span>
       )}
     </>
@@ -40,7 +40,7 @@ export async function UserChip({ compact = false, dark = false, href }: { compac
 }
 
 export function UserChipSkeleton({ compact = false, dark = false }: { compact?: boolean; dark?: boolean }) {
-  const bone = dark ? "bg-white/10" : "bg-surface-2";
+  const bone = dark ? "bg-[var(--nav-chip)]" : "bg-surface-2";
   return (
     <div className="flex items-center gap-3">
       <span className={cn("size-9 animate-pulse rounded-xl", bone)} />

@@ -114,11 +114,12 @@ export function mockModules(now = new Date()): ProgramModule[] {
  * Short self-paced demo courses shown next to the program in Learn. Everything is unlocked;
  * lesson ids start at 9001 so they never collide with program lessons or admin uploads (50 000+).
  */
-const shortCourseSeeds: { slug: string; title: string; tagline: string; level: Course["level"]; coach: Coach; modules: { title: string; lessons: string[] }[] }[] = [
+const shortCourseSeeds: { slug: string; title: string; tagline: string; cover: string; level: Course["level"]; coach: Coach; modules: { title: string; lessons: string[] }[] }[] = [
   {
     slug: "kitchen-costing",
     title: "Kitchen Costing Masterclass",
     tagline: "Price every plate and protect your margin on cost-plus contracts.",
+    cover: "/photos/sector-industries.webp",
     level: "Beginner",
     coach: bobby,
     modules: [
@@ -130,6 +131,7 @@ const shortCourseSeeds: { slug: string; title: string; tagline: string; level: C
     slug: "haccp-essentials",
     title: "HACCP & Food Safety Essentials",
     tagline: "Set up a HACCP plan and the daily logs auditors ask for.",
+    cover: "/photos/sector-corporate.webp",
     level: "Intermediate",
     coach: coachA,
     modules: [{ title: "HACCP in practice", lessons: ["Course introduction", "The 7 HACCP principles", "Critical control points in a hospital kitchen", "Daily logs and record keeping"] }],
@@ -138,6 +140,7 @@ const shortCourseSeeds: { slug: string; title: string; tagline: string; level: C
     slug: "first-hospital-contract",
     title: "Winning Your First Hospital Contract",
     tagline: "From tender reading to a signed cost-plus agreement.",
+    cover: "/photos/sector-hospitals.webp",
     level: "Advanced",
     coach: bobby,
     modules: [{ title: "The contract playbook", lessons: ["Before you bid", "Reading the tender", "Building the proposal", "Negotiation and closing"] }],
@@ -152,6 +155,7 @@ export function mockShortCourses(): Course[] {
     slug: c.slug,
     title: c.title,
     tagline: c.tagline,
+    cover: c.cover,
     kind: "short" as const,
     level: c.level,
     coach: c.coach,

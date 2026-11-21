@@ -97,6 +97,8 @@ export interface Course {
   startsAt?: string | null;
   endsAt?: string | null;
   status?: "draft" | "published";
+  /** Cover photo: a site path such as /photos/sector-hospitals.webp (or an uploaded image URL once the backend exists). */
+  cover?: string | null;
 }
 
 /** Payload for creating a course from the admin panel. Dates are UTC ISO strings. */
@@ -109,7 +111,9 @@ export interface CourseDraft {
   startsAt: string;
   endsAt: string;
   publish: boolean;
-  modules: { title: string; lessons: { title: string; releaseAt: string; fileName: string | null; isPreview: boolean }[] }[];
+  cover?: string | null;
+  /** Ids are sent when editing, so existing lessons keep their video and student progress. */
+  modules: { id?: number; title: string; lessons: { id?: number; title: string; releaseAt: string; fileName: string | null; isPreview: boolean }[] }[];
 }
 
 export interface ProgramModule {
@@ -371,4 +375,26 @@ export interface ReminderPrefs {
   email: boolean;
   dayBefore: boolean;
   min15: boolean;
+}
+
+/* ───────── Certificates ───────── */
+
+export interface CertificateStep {
+  key: "attendance" | "lessons" | "homework" | "final";
+  label: string;
+  done: boolean;
+  current: number;
+  total: number;
+  unit: "%" | null;
+  hint?: string | null;
+}
+
+/** GET /my/certificates: one entry per course the student is on, with the certificate once all steps are met. */
+export interface CertificateEntry {
+  course: { id: number; slug: string; title: string; kind: "program" | "short"; batchName: string | null };
+  status: "earned" | "in_progress";
+  steps: CertificateStep[];
+  stepsDone: number;
+  /** url: the public page with the QR code (Laravel). Null in mock mode, where there is no such page. */
+  certificate: { code: string; studentName: string; courseTitle: string; issuedAt: string; url: string | null } | null;
 }

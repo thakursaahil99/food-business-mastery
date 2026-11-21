@@ -19,7 +19,7 @@ const heightFor = (w) => (w < 600 ? 780 : w < 900 ? 1024 : 800);
 const PAGES = {
   public: ["/", "/programs/cgr-mastery", "/apply", "/login", "/register", "/admin/login"],
   student: ["/student", "/student/schedule", "/student/learn", "/student/learn/1", "/student/learn/9002", "/student/assignments", "/student/attendance", "/student/doubts", "/student/payments", "/student/profile", "/student/class/1000", "/student/class/2001"],
-  admin: ["/admin", "/admin/analytics", "/admin/leads", "/admin/students", "/admin/students/100", "/admin/batches", "/admin/sessions", "/admin/courses", "/admin/courses/new", "/admin/assignments", "/admin/doubts", "/admin/payments"],
+  admin: ["/admin", "/admin/analytics", "/admin/leads", "/admin/students", "/admin/students/100", "/admin/batches", "/admin/sessions", "/admin/courses", "/admin/courses/new", "/admin/courses/kitchen-costing/edit", "/admin/assignments", "/admin/doubts", "/admin/payments"],
 };
 
 const chromePaths = [
@@ -111,8 +111,19 @@ function findOverflow() {
   };
 }
 
+/** page.evaluate that survives a dev-server hot reload mid-check: wait for the reload, then retry once. */
+async function evalSafe(page, fn) {
+  try {
+    return await page.evaluate(fn);
+  } catch (e) {
+    if (!/Execution context was destroyed|navigation/i.test(String(e))) throw e;
+    await page.waitForLoadState("networkidle").catch(() => {});
+    return page.evaluate(fn);
+  }
+}
+
 async function scrollThrough(page) {
-  await page.evaluate(async () => {
+  await evalSafe(page, async () => {
     const step = window.innerHeight * 0.7;
     for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
       window.scrollTo(0, y);
@@ -135,10 +146,19 @@ async function checkTabs(page, path, w, errors) {
     const tab = page.locator(TAB_SELECTOR).nth(i);
     if (!(await tab.isVisible().catch(() => false))) continue;
     const label = ((await tab.innerText().catch(() => "")) || (await tab.getAttribute("aria-label")) || `#${i}`).replace(/\s+/g, " ").trim().slice(0, 30);
-    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.evaluate(() => window.scrollTo(0, 0)).catch(() => {});
+    const before = page.url();
     await tab.click({ timeout: 3000 }).catch(() => {});
     await page.waitForTimeout(700);
-    const o = await page.evaluate(findOverflow);
+    // A "tab" that is really a link (e.g. a day that opens another page): note it and come back.
+    if (page.url() !== before) {
+      await page.waitForLoadState("networkidle").catch(() => {});
+      console.log(`  → tab "${label}" navigated to ${page.url().replace(BASE, "")}; returning`);
+      await page.goto(before, { waitUntil: "networkidle" }).catch(() => {});
+      continue;
+    }
+    const o = await page.evaluate(findOverflow).catch(() => null);
+    if (!o) continue;
     const file = join(outDir, `${slug(path)}@${w}~tab-${i}-${label.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, "-").replace(/^-|-$/g, "")}.png`);
     await page.screenshot({ path: file, fullPage: true });
     const bad = o.scrollWidth > o.vw || o.offenders.length > 0 || errors.size > 0;
@@ -189,7 +209,7 @@ for (const [context, paths] of groups) {
       await page.setViewportSize({ width: w, height: heightFor(w) });
       const res = await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" }).catch((e) => ({ status: () => e.message }));
       await scrollThrough(page);
-      const o = await page.evaluate(findOverflow);
+      const o = await evalSafe(page, findOverflow);
       const file = join(outDir, `${slug(path)}@${w}.png`);
       await page.screenshot({ path: file, fullPage: true });
       const bad = o.scrollWidth > o.vw || o.offenders.length > 0 || errors.size > 0;

@@ -11,6 +11,7 @@ import type { TextSize } from "@/lib/i18n/dict";
 import type { ReminderPrefs, User } from "@/lib/types";
 import { cn, initials } from "@/lib/utils";
 import { PageHeader, Section, ToggleRow } from "./ui";
+import { StudentAccentPicker } from "@/components/theme/student-accent-picker";
 
 type Cert = { attendancePct: number; lessonsDone: number; lessonsTotal: number; homeworkSent: number; homeworkTotal: number };
 
@@ -109,6 +110,11 @@ export function ProfileView({ user, batchName, since, textSize, prefs: initialPr
                 <Languages className="size-5 text-bean-600" /> {T.language}
               </div>
               <LangToggle />
+            </div>
+            <div>
+              <div className="mb-2 text-base font-medium text-fg">{t.shell.colourTitle}</div>
+              <StudentAccentPicker className="w-fit" />
+              <p className="mt-2 text-sm text-fg-muted">{t.shell.colourHint}</p>
             </div>
           </div>
         </Section>

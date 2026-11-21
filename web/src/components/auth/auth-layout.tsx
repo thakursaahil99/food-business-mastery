@@ -4,7 +4,7 @@ import { BrandPanel } from "./brand-panel";
 import { FadedBeans } from "./faded-beans";
 import Image from "next/image";
 import { BRAND } from "@/components/ui/logo";
-import { AUTH_PHOTO, FLAGSHIP_COURSE } from "./course";
+import { AUTH_PHOTO, FLAGSHIP_COURSE, SECTOR_PHOTOS } from "./course";
 
 /** Overbooked-style split layout: brand panel left (45%), form right. */
 export function AuthLayout({ children, variant = "student" }: { children: ReactNode; variant?: "student" | "admin" }) {
@@ -31,8 +31,12 @@ export function AuthLayout({ children, variant = "student" }: { children: ReactN
               )}
             </div>
             {variant === "student" && (
-              <span className="relative hidden size-20 shrink-0 overflow-hidden rounded-xl ring-1 ring-white/20 min-[400px]:block">
-                <Image src={FLAGSHIP_COURSE.thumb.src} alt={FLAGSHIP_COURSE.thumb.alt} fill sizes="80px" className="object-cover" />
+              <span className="hidden shrink-0 -space-x-3 min-[400px]:flex" aria-hidden>
+                {SECTOR_PHOTOS.slice(0, 3).map((p) => (
+                  <span key={p.src} className="relative size-12 overflow-hidden rounded-full ring-2 ring-white">
+                    <Image src={p.src} alt="" fill sizes="48px" className="object-cover" />
+                  </span>
+                ))}
               </span>
             )}
           </div>

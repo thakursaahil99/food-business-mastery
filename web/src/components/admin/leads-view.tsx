@@ -6,6 +6,8 @@ import { Check, ChevronDown, Mail, MessageCircle, PhoneCall, Send, X } from "luc
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { sendPaymentLink, updateLeadStatus } from "@/lib/actions/admin";
+import { deleteLead, saveLead, type LeadInput } from "@/lib/actions/admin-crud";
+import { AddButton, ConfirmDelete, FormError, FormFooter, Modal, RowActions, Select, TextArea, TextInput, useAdminAction } from "./crud";
 import type { Lead, LeadStatus } from "@/lib/types";
 import { cn, fmtDate } from "@/lib/utils";
 import { Avatar, Empty, LeadPill, Page, PageHeader, SearchInput, Tabs, fadeUp, leadStatusLabel } from "./ui";
@@ -18,6 +20,9 @@ export function LeadsView({ initial }: { initial: Lead[] }) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<number | null>(null);
   const [, start] = useTransition();
+  const [editing, setEditing] = useState<Lead | "new" | null>(null);
+  const [removing, setRemoving] = useState<Lead | null>(null);
+  const del = useAdminAction();
 
   const counts = useMemo(() => {
     const c: Record<Filter, number> = { all: leads.length, new: 0, contacted: 0, approved: 0, rejected: 0 };
@@ -54,7 +59,7 @@ export function LeadsView({ initial }: { initial: Lead[] }) {
 
   return (
     <Page>
-      <PageHeader title="Leads" sub="Applications from the website, social and webinars. Call new leads within 24 hours." />
+      <PageHeader title="Leads" sub="Applications from the website, social and webinars. Call new leads within 24 hours." actions={<AddButton onClick={() => setEditing("new")}>Add lead</AddButton>} />
       <motion.div variants={fadeUp} className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <Tabs
           id="leads"
@@ -149,6 +154,7 @@ export function LeadsView({ initial }: { initial: Lead[] }) {
                                   Reopen
                                 </Button>
                               )}
+                              <RowActions onEdit={() => setEditing(l)} onDelete={() => setRemoving(l)} />
                             </div>
                           </div>
                         </motion.div>
@@ -161,6 +167,72 @@ export function LeadsView({ initial }: { initial: Lead[] }) {
           </ul>
         )}
       </motion.div>
+
+      <LeadForm
+        key={editing === "new" ? "new" : (editing?.id ?? "none")}
+        lead={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(saved, isNew) => {
+          setLeads((ls) => (isNew ? [saved, ...ls] : ls.map((l) => (l.id === saved.id ? { ...l, ...saved, createdAt: l.createdAt } : l))));
+          if (isNew) setFilter(saved.status);
+          setEditing(null);
+        }}
+      />
+      <ConfirmDelete
+        open={!!removing}
+        onClose={() => setRemoving(null)}
+        pending={del.pending}
+        error={del.error}
+        title="Delete this lead?"
+        body={
+          <>
+            <b>{removing?.name}</b> and their application will be removed from the list. This can’t be undone.
+          </>
+        }
+        onConfirm={() => {
+          const l = removing!;
+          del.run(() => deleteLead(l.id), `${l.name} deleted`, () => {
+            setLeads((ls) => ls.filter((x) => x.id !== l.id));
+            setRemoving(null);
+          });
+        }}
+      />
     </Page>
+  );
+}
+
+const SOURCES = ["Website", "Instagram", "Facebook", "YouTube", "Webinar", "Referral", "Walk-in", "Other"];
+
+function LeadForm({ lead, onClose, onSaved }: { lead: Lead | "new" | null; onClose: () => void; onSaved: (l: Lead, isNew: boolean) => void }) {
+  const editing = lead && lead !== "new" ? lead : null;
+  const [f, setF] = useState<LeadInput>(() => ({
+    name: editing?.name ?? "",
+    email: editing?.email ?? "",
+    phone: editing?.phone ?? "",
+    city: editing?.city ?? "",
+    businessGoals: editing?.businessGoals ?? "",
+    source: editing?.source ?? "Website",
+    status: editing?.status ?? "new",
+    assignedTo: editing?.assignedTo ?? "",
+  }));
+  const set = <K extends keyof LeadInput>(k: K) => (v: LeadInput[K]) => setF((x) => ({ ...x, [k]: v }));
+  const act = useAdminAction();
+  const sources = SOURCES.includes(f.source) ? SOURCES : [f.source, ...SOURCES];
+  const save = () => act.run(() => saveLead(editing?.id ?? null, f), editing ? "Lead updated" : "Lead added", (r) => onSaved(r.data, !editing));
+
+  return (
+    <Modal open={!!lead} onClose={onClose} title={editing ? `Edit ${editing.name}` : "Add a lead"} sub={editing ? undefined : "For calls, walk-ins and referrals that didn't come through the website form."} footer={<FormFooter onCancel={onClose} onSave={save} pending={act.pending} saveLabel={editing ? "Save changes" : "Add lead"} />}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TextInput label="Full name" value={f.name} onChange={set("name")} className="sm:col-span-2" autoComplete="off" />
+        <TextInput label="Phone / WhatsApp" value={f.phone} onChange={set("phone")} inputMode="tel" placeholder="98765 43210" />
+        <TextInput label="Email" value={f.email} onChange={set("email")} type="email" />
+        <TextInput label="City" value={f.city} onChange={set("city")} />
+        <Select label="Source" value={f.source} onChange={set("source")} options={sources.map((s) => ({ value: s, label: s }))} />
+        <Select label="Status" value={f.status} onChange={set("status")} options={(["new", "contacted", "approved", "rejected"] as const).map((s) => ({ value: s, label: leadStatusLabel(s) }))} />
+        <TextInput label="Assigned to" hint="optional" value={f.assignedTo ?? ""} onChange={set("assignedTo")} />
+        <TextArea label="Business goals" value={f.businessGoals} onChange={set("businessGoals")} className="sm:col-span-2" maxLength={1000} />
+      </div>
+      <FormError error={act.error} />
+    </Modal>
   );
 }

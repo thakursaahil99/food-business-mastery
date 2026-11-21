@@ -54,6 +54,6 @@ export async function apiFetch<T>(
   }
   if (res.status === 204) return undefined as T;
   const json = (await res.json()) as { data?: T } & T;
-  // Laravel API Resources wrap payloads in { data }
-  return (json.data ?? json) as T;
+  // Laravel API Resources wrap payloads in { data }. A present-but-null data (e.g. no billing profile yet) stays null.
+  return ("data" in json ? json.data : json) as T;
 }

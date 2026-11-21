@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cacheLife } from "next/cache";
 import { Logo } from "@/components/ui/logo";
+import { SocialLinks } from "@/components/marketing/social-links";
 import { brand, nav } from "@/content/site";
 
 export function Footer() {
@@ -12,6 +13,8 @@ export function Footer() {
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">
             {brand.tagline}. A {brand.company} initiative led by {brand.coach}.
           </p>
+          <h4 className="mt-7 text-xs font-medium uppercase tracking-[0.2em] text-white/40">Follow us</h4>
+          <SocialLinks className="mt-3" />
         </div>
         <div>
           <h4 className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">Explore</h4>

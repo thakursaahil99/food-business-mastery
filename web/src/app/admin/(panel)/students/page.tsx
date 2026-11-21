@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { StudentsView } from "@/components/admin/students-view";
 import { PortalSkeleton } from "@/components/portal/skeletons";
 import { getRequestTime } from "@/lib/api/data";
-import { getStudents } from "@/lib/api/data-admin";
+import { getBatches, getStudents } from "@/lib/api/data-admin";
 
 export const metadata: Metadata = { title: "Students" };
 
@@ -16,6 +16,6 @@ export default function StudentsPage() {
 }
 
 async function Students() {
-  const [students, serverNow] = await Promise.all([getStudents(), getRequestTime()]);
-  return <StudentsView students={students} serverNow={serverNow} />;
+  const [students, batches, serverNow] = await Promise.all([getStudents(), getBatches(), getRequestTime()]);
+  return <StudentsView students={students} batchOptions={batches.map((b) => ({ name: b.name, price: b.price }))} serverNow={serverNow} />;
 }

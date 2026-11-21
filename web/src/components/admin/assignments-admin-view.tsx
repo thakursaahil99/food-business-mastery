@@ -6,6 +6,8 @@ import { CalendarClock, CheckCircle2, ClipboardList, FileText, Loader2, Plus, X 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { createAssignment, reviewSubmission } from "@/lib/actions/admin";
+import { deleteAssignment, updateAssignment } from "@/lib/actions/admin-crud";
+import { ConfirmDelete, DateInput, FormError, FormFooter, Modal, NumberInput, RowActions, Select, TextArea, TextInput, istDateToIso, isoToIstDate, useAdminAction } from "./crud";
 import type { AssignmentAdmin } from "@/lib/types";
 import { cn, fmtDate, fmtDayLong, fmtTime } from "@/lib/utils";
 import { curriculum } from "@/content/site";
@@ -17,6 +19,9 @@ export function AssignmentsAdminView({ initial, serverNow }: { initial: Assignme
   const [items, setItems] = useState(initial);
   const [sel, setSel] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<AssignmentAdmin | null>(null);
+  const [removing, setRemoving] = useState<AssignmentAdmin | null>(null);
+  const del = useAdminAction();
   const current = items.find((a) => a.id === sel) ?? null;
 
   const applyReview = (aid: number, sid: number, patch: Partial<Sub>) =>
@@ -78,6 +83,7 @@ export function AssignmentsAdminView({ initial, serverNow }: { initial: Assignme
                 <p className="relative mt-1 text-sm text-white/55">
                   Due {fmtDayLong(current.dueAt)} · {current.maxScore} pts · {current.submissions.length} submissions
                 </p>
+                <RowActions className="relative mt-4" dark onEdit={() => setEditing(current)} onDelete={() => setRemoving(current)} />
               </div>
               <ul className="flex-1 space-y-3 overflow-y-auto p-5" data-lenis-prevent>
                 {current.submissions.length === 0 && <li className="py-10 text-center text-sm text-fg-muted">No submissions yet.</li>}
@@ -91,6 +97,35 @@ export function AssignmentsAdminView({ initial, serverNow }: { initial: Assignme
       </AnimatePresence>
 
       <CreateDialog open={creating} onClose={() => setCreating(false)} onCreated={(a) => setItems((xs) => [...xs, a])} />
+      <EditAssignmentDialog
+        key={editing?.id ?? "none"}
+        assignment={editing}
+        onClose={() => setEditing(null)}
+        onSaved={(id, patch) => {
+          setItems((xs) => xs.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+          setEditing(null);
+        }}
+      />
+      <ConfirmDelete
+        open={!!removing}
+        onClose={() => setRemoving(null)}
+        pending={del.pending}
+        error={del.error}
+        title="Delete this assignment?"
+        body={
+          <>
+            <b>{removing?.title}</b> and its {removing?.submissions.length ?? 0} submissions are removed for every student. This can’t be undone.
+          </>
+        }
+        onConfirm={() => {
+          const a = removing!;
+          del.run(() => deleteAssignment(a.id), "Assignment deleted", () => {
+            setItems((xs) => xs.filter((x) => x.id !== a.id));
+            setSel(null);
+            setRemoving(null);
+          });
+        }}
+      />
     </Page>
   );
 }
@@ -246,5 +281,34 @@ function CreateDialog({ open, onClose, onCreated }: { open: boolean; onClose: ()
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+function EditAssignmentDialog({ assignment, onClose, onSaved }: { assignment: AssignmentAdmin | null; onClose: () => void; onSaved: (id: number, patch: Partial<AssignmentAdmin>) => void }) {
+  const modules = [...new Set([...(assignment?.moduleTitle ? [assignment.moduleTitle] : []), ...curriculum.map((c) => c.title)])];
+  const [f, setF] = useState(() => ({
+    title: assignment?.title ?? "",
+    description: assignment?.description ?? "",
+    moduleTitle: assignment?.moduleTitle ?? modules[0] ?? "",
+    date: assignment ? isoToIstDate(assignment.dueAt) : "",
+    maxScore: assignment?.maxScore ?? 20,
+  }));
+  const act = useAdminAction();
+  const save = () => {
+    if (!assignment) return;
+    const patch = { title: f.title, description: f.description, moduleTitle: f.moduleTitle || null, dueAt: istDateToIso(f.date, "23:59"), maxScore: f.maxScore };
+    act.run(() => updateAssignment(assignment.id, patch), "Assignment updated", () => onSaved(assignment.id, patch));
+  };
+  return (
+    <Modal open={!!assignment} onClose={onClose} title="Edit assignment" footer={<FormFooter onCancel={onClose} onSave={save} pending={act.pending} saveLabel="Save changes" />}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TextInput label="Title" value={f.title} onChange={(v) => setF((x) => ({ ...x, title: v }))} className="sm:col-span-2" />
+        <TextArea label="What should students submit?" value={f.description} onChange={(v) => setF((x) => ({ ...x, description: v }))} rows={4} maxLength={4000} className="sm:col-span-2" />
+        <Select label="Module" value={f.moduleTitle} onChange={(v) => setF((x) => ({ ...x, moduleTitle: v }))} options={modules.map((m) => ({ value: m, label: m }))} className="sm:col-span-2" />
+        <DateInput label="Due date" value={f.date} onChange={(v) => setF((x) => ({ ...x, date: v }))} />
+        <NumberInput label="Max score" value={f.maxScore} onChange={(v) => setF((x) => ({ ...x, maxScore: v }))} min={1} max={100} />
+      </div>
+      <FormError error={act.error} />
+    </Modal>
   );
 }

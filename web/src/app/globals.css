@@ -255,3 +255,102 @@ html[data-accent="pink"] .rb-themed {
   --color-bean-800: #9d174d; --color-bean-900: #831843; --color-bean-950: #500724;
 }
 .rb-themed ::selection { background: var(--color-bean-500); }
+
+/* Nav style. Dark is the Red-Black look (default); html[data-nav=light] switches sidebars and the phone
+   tab bar to White. Components read these variables instead of fixed ink or white classes. */
+.rb-themed {
+  --nav-bg: #07070a;
+  --nav-fg: #ffffff;
+  --nav-muted: rgb(255 255 255 / 0.62);
+  --nav-faint: rgb(255 255 255 / 0.38);
+  --nav-hover: rgb(255 255 255 / 0.06);
+  --nav-chip: rgb(255 255 255 / 0.1);
+  --nav-card: rgb(255 255 255 / 0.05);
+  --nav-border: rgb(255 255 255 / 0.08);
+  --nav-bg-image: none;
+  --nav-active-bg: linear-gradient(90deg, var(--color-bean-600), var(--color-bean-700));
+  --nav-active-fg: #ffffff;
+  --nav-active-shadow: 0 8px 24px -8px rgb(var(--accent-rgb) / 0.7);
+}
+html[data-nav="light"] .rb-themed {
+  --nav-bg: #ffffff;
+  --nav-fg: #19191d;
+  --nav-muted: #55555f;
+  --nav-faint: #8a8a95;
+  --nav-hover: #f3f2ee;
+  --nav-chip: #efeee9;
+  --nav-card: #f6f5f1;
+  --nav-border: rgb(17 17 20 / 0.09);
+}
+/* Soft: a light tint of the theme colour. */
+html[data-nav="soft"] .rb-themed {
+  --nav-bg: var(--color-bean-50);
+  --nav-bg-image: linear-gradient(180deg, var(--color-bean-50) 0%, var(--color-bean-100) 100%);
+  --nav-fg: #19191d;
+  --nav-muted: #4c4c57;
+  --nav-faint: #83838e;
+  --nav-hover: rgb(var(--accent-rgb) / 0.09);
+  --nav-chip: rgb(var(--accent-rgb) / 0.12);
+  --nav-card: rgb(255 255 255 / 0.7);
+  --nav-border: rgb(var(--accent-rgb) / 0.16);
+}
+/* Colour: a deep, full-colour sidebar; the active item becomes a white pill. */
+html[data-nav="colour"] .rb-themed {
+  --nav-bg: var(--color-bean-800);
+  --nav-bg-image: linear-gradient(180deg, var(--color-bean-700) 0%, var(--color-bean-900) 72%, var(--color-bean-950) 100%);
+  --nav-fg: #ffffff;
+  --nav-muted: rgb(255 255 255 / 0.8);
+  --nav-faint: rgb(255 255 255 / 0.58);
+  --nav-hover: rgb(255 255 255 / 0.1);
+  --nav-chip: rgb(255 255 255 / 0.16);
+  --nav-card: rgb(255 255 255 / 0.1);
+  --nav-border: rgb(255 255 255 / 0.12);
+  --nav-active-bg: #ffffff;
+  --nav-active-fg: var(--color-bean-700);
+  --nav-active-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.5);
+}
+.rb-themed .rb-nav-surface { background-image: var(--nav-bg-image); }
+.rb-themed .rb-nav-pill { background: var(--nav-active-bg); box-shadow: var(--nav-active-shadow); }
+.rb-themed .rb-nav-light-only { display: none; }
+:is(html[data-nav="light"], html[data-nav="soft"]) .rb-themed .rb-nav-light-only { display: inline-flex; }
+:is(html[data-nav="light"], html[data-nav="soft"]) .rb-themed .rb-nav-dark-only { display: none; }
+:is(html[data-nav="light"], html[data-nav="soft"]) .rb-themed .rb-nav-deco { display: none; }
+:is(html[data-nav="light"], html[data-nav="soft"]) .rb-themed .rb-nav.grain::after { display: none; }
+:is(html[data-nav="light"], html[data-nav="soft"]) .rb-themed .rb-nav { box-shadow: inset -1px 0 0 var(--nav-border); }
+
+/* Soft canvas: a faded wash of the theme colour behind the content (default). data-bg=plain turns it off. */
+.rb-themed .rb-canvas {
+  background-image:
+    radial-gradient(900px 520px at 102% -6%, rgb(var(--accent-rgb) / 0.16), transparent 62%),
+    radial-gradient(760px 520px at -8% 104%, rgb(245 194 107 / 0.16), transparent 62%),
+    radial-gradient(640px 420px at 55% 45%, rgb(var(--accent-rgb) / 0.04), transparent 70%),
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.035), transparent 34%);
+  background-attachment: fixed;
+}
+html[data-bg="plain"] .rb-themed .rb-canvas { background-image: none; }
+html[data-bg="vivid"] .rb-themed .rb-canvas {
+  background-image:
+    radial-gradient(1000px 620px at 104% -8%, rgb(var(--accent-rgb) / 0.28), transparent 62%),
+    radial-gradient(860px 580px at -10% 106%, rgb(245 194 107 / 0.28), transparent 62%),
+    radial-gradient(720px 500px at 48% 42%, rgb(var(--accent-rgb) / 0.08), transparent 70%),
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 0.07), transparent 42%);
+}
+
+/* Login panel: the four sector photos circle the logo slowly (one turn a minute). Each photo turns back so it stays upright. */
+@keyframes rb-orbit {
+  to { transform: rotate(360deg); }
+}
+.rb-orbit { animation: rb-orbit 60s linear infinite; }
+.rb-orbit-counter { animation: rb-orbit 60s linear infinite reverse; }
+@media (prefers-reduced-motion: reduce) {
+  .rb-orbit, .rb-orbit-counter { animation: none; }
+}
+
+/* Certificate printing: only the chosen certificate is printed, on one A4 landscape page. */
+@media print {
+  body.rb-printing * { visibility: hidden; }
+  body.rb-printing .rb-print-me,
+  body.rb-printing .rb-print-me * { visibility: visible; }
+  body.rb-printing .rb-print-me { position: fixed; inset: 0; width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+}
+@page { size: A4 landscape; margin: 0; }

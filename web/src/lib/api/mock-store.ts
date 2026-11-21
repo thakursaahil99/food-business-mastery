@@ -4,11 +4,15 @@ import type {
   ReminderPrefs,
   Assignment,
   AssignmentAdmin,
+  BatchSummary,
   BillingProfile,
   ClassSession,
   Doubt,
+  Lead,
   LeadStatus,
   Lesson,
+  PaymentRow,
+  StudentRow,
   Submission,
   User,
 } from "../types";
@@ -21,6 +25,14 @@ import type {
  */
 
 type DoubtRow = Doubt & { studentId: number | "demo" };
+
+/** Admin CRUD on mock lists: rows added, fields edited, rows removed. Applied on read over the seed data. */
+export type Overlay<T> = { created: T[]; patches: Map<number, Partial<T>>; deleted: Set<number> };
+const overlay = <T,>(): Overlay<T> => ({ created: [], patches: new Map(), deleted: new Set() });
+
+export function applyOverlay<T extends { id: number }>(base: T[], o: Overlay<T>): T[] {
+  return [...o.created, ...base].filter((x) => !o.deleted.has(x.id)).map((x) => ({ ...x, ...o.patches.get(x.id) }));
+}
 
 type Store = {
   createdSessions: ClassSession[];
@@ -35,6 +47,16 @@ type Store = {
   lessonsAdded: Map<number, Lesson[]>;
   /** Courses created in the admin panel (lesson lock state is computed on read from releaseAt). */
   createdCourses: Course[];
+  /** Built-in courses edited in admin (by slug) and courses removed from the catalogue. */
+  courseOverrides: Map<string, Course>;
+  deletedCourses: Set<string>;
+  leads: Overlay<Lead>;
+  students: Overlay<StudentRow>;
+  batches: Overlay<BatchSummary>;
+  payments: Overlay<PaymentRow>;
+  assignmentPatches: Map<number, Partial<Omit<Assignment, "submission">>>;
+  deletedAssignments: Set<number>;
+  deletedSessions: Set<number>;
   seq: number;
 };
 
@@ -51,6 +73,15 @@ const fresh = (): Store => ({
   prefs: new Map(),
   lessonsAdded: new Map(),
   createdCourses: [],
+  courseOverrides: new Map(),
+  deletedCourses: new Set(),
+  leads: overlay(),
+  students: overlay(),
+  batches: overlay(),
+  payments: overlay(),
+  assignmentPatches: new Map(),
+  deletedAssignments: new Set(),
+  deletedSessions: new Set(),
   seq: 50_000,
 });
 // The store survives hot reloads on globalThis. Merge over fresh defaults so a field added to Store
@@ -63,6 +94,7 @@ export const nextId = () => ++store.seq;
 
 export function withSessionOverlays(base: ClassSession[]) {
   return [...base, ...store.createdSessions]
+    .filter((s) => !store.deletedSessions.has(s.id))
     .map((s) => ({ ...s, ...store.sessionPatches.get(s.id) }))
     .sort((a, b) => +new Date(a.startsAt) - +new Date(b.startsAt));
 }
@@ -96,7 +128,8 @@ function seededSubmission(id: number, a: Omit<Assignment, "submission">): Submis
   return null;
 }
 
-const allAssignments = (now: Date) => [...seedAssignments(now), ...store.createdAssignments];
+const allAssignments = (now: Date) =>
+  [...seedAssignments(now), ...store.createdAssignments].filter((a) => !store.deletedAssignments.has(a.id)).map((a) => ({ ...a, ...store.assignmentPatches.get(a.id) }));
 
 export function studentAssignments(user: User, now: Date): Assignment[] {
   return allAssignments(now)
@@ -181,10 +214,13 @@ export const DEFAULT_PREFS: ReminderPrefs = { whatsapp: true, email: true, dayBe
 
 /* ───────── Courses created in admin ───────── */
 
+/** A built-in course with any admin edits applied, or null when it was removed. */
+export const withCourseEdits = (c: Course): Course | null => (store.deletedCourses.has(c.slug) ? null : (store.courseOverrides.get(c.slug) ?? c));
+
 /** Published admin-created courses as a student sees them: lessons stay locked until their releaseAt. */
 export function publishedCourses(now: number): Course[] {
   return store.createdCourses
-    .filter((c) => c.status === "published")
+    .filter((c) => c.status === "published" && !store.deletedCourses.has(c.slug))
     .map((c) => ({
       ...c,
       modules: c.modules.map((m) => ({

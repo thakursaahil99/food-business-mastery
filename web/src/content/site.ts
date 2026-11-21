@@ -154,3 +154,42 @@ export const faqs = [
     a: "Yes. Complete the live project and final assessment to receive a Redbean certificate with a QR code anyone can verify online.",
   },
 ];
+
+/* ───────── Program page: Udemy-style "what you'll learn / this program includes" ───────── */
+
+export const programOutcomes = [
+  "Price food contracts on a cost-plus model and protect your margin",
+  "Design hospital and corporate kitchens with a clean one-way flow",
+  "Pass NABH and HACCP audits with the right SOPs and daily logs",
+  "Control food cost, inventory and vendors with simple weekly reviews",
+  "Plan rosters for 24×7 sites without overtime surprises",
+  "Run patient meal service, therapeutic diets and quality checks",
+  "Read tenders and write proposals that get signed",
+  "Negotiate cost-plus terms with procurement teams",
+  "Grow from one site to many with systems and a strong team",
+  "Build a contract food business that runs without you on site",
+];
+
+export const programIncludes = [
+  { icon: "Video", text: "Weekly live classes for 16 weeks" },
+  { icon: "PlayCircle", text: "Recordings of every class, watch any time" },
+  { icon: "FileText", text: "Templates: costing sheets, SOPs, proposals, checklists" },
+  { icon: "Crown", text: "1:1 mentorship with MD Sir (Bobby Singh)" },
+  { icon: "LayoutDashboard", text: "Access to the RFC CRM for leads and clients" },
+  { icon: "CalendarCheck", text: "Webinars, guest experts and offline meet-ups" },
+  { icon: "Smartphone", text: "Learn on phone or computer, in Hindi or English" },
+  { icon: "Award", text: "Certificate with QR verification on completion" },
+];
+
+export const programRequirements = [
+  "No prior catering experience needed. We start from the basics.",
+  "A phone or computer with internet for live classes on Zoom.",
+  "About 4–6 hours a week for classes, recordings and homework.",
+];
+
+export const programAudience = [
+  "Owners of corporate cafeterias, hospital canteens and industrial kitchens",
+  "Caterers moving from events into steady contract business",
+  "First-time founders who want to enter contract food the right way",
+  "Hospitality professionals planning to start their own company",
+];
